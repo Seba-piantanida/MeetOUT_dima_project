@@ -25,15 +25,35 @@ class _CreateEventPageState extends State<CreateEventPage> {
           ),
         ),
         body: Padding(
-          padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
+          padding: const EdgeInsets.only(left: 15, right: 15),
           child: ListView(
             children: [
-              const TextField(
-                decoration: InputDecoration(
-                  hintText: 'Event name',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(20))),
-                  contentPadding: EdgeInsets.all(8.0),
+              Padding(
+                padding: const EdgeInsets.only(top: 15),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 15),
+                      child: Container(
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            color: Colors.amber),
+                      ),
+                    ),
+                    const Flexible(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          hintText: 'Event name',
+                          border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20))),
+                          contentPadding: EdgeInsets.all(8.0),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               Padding(
@@ -158,7 +178,20 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
               ),
-              Container(width: 300, height: 300, child: const Map()),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  const SizedBox.square(dimension: 150, child: Map()),
+                  ElevatedButton(
+                      onPressed: () {
+                        print("pick location");
+                      },
+                      child: const Row(
+                        children: [Icon(Icons.pin_drop), Text("Pick location")],
+                      )),
+                ],
+              ),
               Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Text(
@@ -173,12 +206,15 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
               ),
-              ElevatedButton(
-                  onPressed: () {},
-                  child: Text(
-                    "Create",
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ))
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: ElevatedButton(
+                    onPressed: () {},
+                    child: Text(
+                      "Create",
+                      style: Theme.of(context).textTheme.titleMedium,
+                    )),
+              )
             ],
           ),
         ));

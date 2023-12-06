@@ -1,7 +1,7 @@
 import 'package:dima_project/create_event_page.dart';
 import 'package:dima_project/find_page.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,19 +15,20 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        textTheme: const TextTheme(
-            //titleMedium: TextStyle(fontSize: , fontWeight: FontWeight.w700)
-            ),
+        //fontFamily: GoogleFonts.manropeTextTheme(baseTheme.textTheme),
+        textTheme: GoogleFonts.latoTextTheme()
+        //titleMedium: TextStyle(fontSize: , fontWeight: FontWeight.w700)
+        ,
         colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.orange, brightness: Brightness.light),
+            seedColor: Colors.lightGreen, brightness: Brightness.light),
         useMaterial3: true,
       ),
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.orange, brightness: Brightness.dark),
+            seedColor: Colors.lightBlue, brightness: Brightness.dark),
       ),
       themeMode: ThemeMode.dark,
-      home: NavBar(),
+      home: const NavBar(),
     );
   }
 }
