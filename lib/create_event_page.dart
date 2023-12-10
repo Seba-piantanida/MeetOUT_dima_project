@@ -1,6 +1,8 @@
+import 'package:dima_project/events_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:dima_project/image_selector.dart';
 
 class CreateEventPage extends StatefulWidget {
   const CreateEventPage({super.key});
@@ -12,6 +14,10 @@ class CreateEventPage extends StatefulWidget {
 class _CreateEventPageState extends State<CreateEventPage> {
   TextEditingController dateInput = TextEditingController();
   TextEditingController timeInput = TextEditingController();
+  TextEditingController nameInput = TextEditingController();
+  TextEditingController descriptionInput = TextEditingController();
+
+  String selectedImage = "";
 
   bool allDay = false;
   @override
@@ -34,17 +40,37 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(right: 15),
-                      child: Container(
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
+                      child: GestureDetector(
+                        onTap: () {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return ImageSelectionDialog(
+                                    onImageSelected: (String imageName) {
+                                  selectedImage = imageName;
+                                  setState(() {});
+                                  print('Selected Image: $imageName');
+                                  // Handle the selected image
+                                });
+                              });
+                        },
+                        child: Container(
+                          height: 50,
+                          width: 50,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey.shade600),
                             borderRadius: BorderRadius.circular(30),
-                            color: Colors.amber),
+                          ),
+                          child: selectedImage == ""
+                              ? const Icon(Icons.add_box_rounded)
+                              : ClipOval(child: Image.asset(selectedImage)),
+                        ),
                       ),
                     ),
-                    const Flexible(
+                    Flexible(
                       child: TextField(
-                        decoration: InputDecoration(
+                        controller: nameInput,
+                        decoration: const InputDecoration(
                           hintText: 'Event name',
                           border: OutlineInputBorder(
                               borderRadius:
@@ -63,10 +89,11 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
               ),
-              const TextField(
+              TextField(
+                controller: descriptionInput,
                 minLines: 4,
                 maxLines: 5,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Write a description of your event',
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(20))),
@@ -182,7 +209,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  const SizedBox.square(dimension: 150, child: Map()),
+                  const SizedBox.square(dimension: 150, child: MapView()),
                   ElevatedButton(
                       onPressed: () {
                         print("pick location");
@@ -209,7 +236,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
               Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: _createEvent,
                     child: Text(
                       "Create",
                       style: Theme.of(context).textTheme.titleMedium,
@@ -219,16 +246,28 @@ class _CreateEventPageState extends State<CreateEventPage> {
           ),
         ));
   }
+
+  void _createEvent() {
+    Map<String, dynamic> event = {
+      'id': '${dateInput.text}-${TimeOfDay.now()}',
+      'name': nameInput.text,
+      "description": descriptionInput.text,
+      "location": const LatLng(45.47430, 9.16951),
+      "date-time": DateTime(2023, 12, 7, 15, 30),
+      "icon": selectedImage,
+    };
+    addEvent(event);
+  }
 }
 
-class Map extends StatefulWidget {
-  const Map({super.key});
+class MapView extends StatefulWidget {
+  const MapView({super.key});
 
   @override
-  State<Map> createState() => _FindPageState();
+  State<MapView> createState() => _FindPageState();
 }
 
-class _FindPageState extends State<Map> {
+class _FindPageState extends State<MapView> {
   late GoogleMapController mapController;
 
   final LatLng _center = const LatLng(45.46427, 9.18951);

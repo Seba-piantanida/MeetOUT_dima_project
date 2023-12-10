@@ -23,3 +23,8 @@ final List events = [
 List<dynamic> getEvents() {
   return events;
 }
+
+void addEvent(Map<String, dynamic> event) {
+  events.add(event);
+  print(events);
+}

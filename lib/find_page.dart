@@ -25,6 +25,7 @@ class _FindPageState extends State<FindPage> {
 
   @override
   void initState() {
+    print("init state");
     _generateMarkers();
     super.initState();
   }
@@ -45,7 +46,7 @@ class _FindPageState extends State<FindPage> {
           padding: const EdgeInsets.all(8.0),
           child: selectedEvents != null
               ? EventDetails(selectedEvents)
-              : SizedBox.expand(),
+              : const SizedBox.expand(),
         ),
       )
     ]);
@@ -62,8 +63,7 @@ class _FindPageState extends State<FindPage> {
           icon: markerIcon,
           onTap: () {
             selectedEvents = events[i];
-            print(events[i]);
-            print("selected event: $selectedEvents");
+
             setState(() {});
           });
 
