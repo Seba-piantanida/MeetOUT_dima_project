@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 final List events = [
@@ -26,5 +25,4 @@ List<dynamic> getEvents() {
 
 void addEvent(Map<String, dynamic> event) {
   events.add(event);
-  print(events);
 }

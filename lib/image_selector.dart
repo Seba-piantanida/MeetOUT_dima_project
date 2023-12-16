@@ -1,8 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
 
 class ImageSelectionDialog extends StatelessWidget {
   final Function(String)? onImageSelected;
@@ -14,7 +12,7 @@ class ImageSelectionDialog extends StatelessWidget {
     return AlertDialog(
       insetPadding: const EdgeInsets.all(10),
       title: const Text('Select an Icon'),
-      content: Container(
+      content: SizedBox(
         height: 300,
         width: double.maxFinite,
         child: FutureBuilder<List<String>>(
@@ -56,10 +54,6 @@ class ImageSelectionDialog extends StatelessWidget {
   }
 
   Future<List<String>> _getAssetImages(BuildContext context) async {
-    Directory directory = await getApplicationDocumentsDirectory();
-    String path = directory.path + '/assets/events_icons/';
-    List<String> images = [];
-
     var assetsFile =
         await DefaultAssetBundle.of(context).loadString('AssetManifest.json');
     final Map<String, dynamic> manifestMap = json.decode(assetsFile);
@@ -68,18 +62,5 @@ class ImageSelectionDialog extends StatelessWidget {
         manifestMap.keys.where((String key) => key.contains('.png')).toList();
 
     return listImage;
-
-    try {
-      List<FileSystemEntity> fileList = Directory(path).listSync();
-      for (FileSystemEntity file in fileList) {
-        if (file is File && file.path.endsWith('.png')) {
-          images.add(file.uri.path);
-          print("$file.uri.path");
-        }
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
-    return images;
   }
 }

@@ -1,4 +1,8 @@
+import 'dart:ffi';
+
 import 'package:dima_project/events_manager.dart';
+import 'package:dima_project/location_picker.dart';
+import 'package:dima_project/map_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -16,6 +20,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
   TextEditingController timeInput = TextEditingController();
   TextEditingController nameInput = TextEditingController();
   TextEditingController descriptionInput = TextEditingController();
+
+  LatLng? _locationInput;
 
   String selectedImage = "";
 
@@ -49,7 +55,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                                     onImageSelected: (String imageName) {
                                   selectedImage = imageName;
                                   setState(() {});
-                                  print('Selected Image: $imageName');
+
                                   // Handle the selected image
                                 });
                               });
@@ -209,14 +215,28 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  const SizedBox.square(dimension: 150, child: MapView()),
                   ElevatedButton(
-                      onPressed: () {
-                        print("pick location");
+                      onPressed: () async {
+                        dynamic returnedLocation = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const LocationPicker()));
+                        if (returnedLocation != null) {
+                          _locationInput = returnedLocation;
+                          setState(() {});
+                        }
                       },
                       child: const Row(
                         children: [Icon(Icons.pin_drop), Text("Pick location")],
                       )),
+                  _locationInput != null
+                      ? SizedBox.square(
+                          dimension: 150,
+                          child: MapView(
+                            center: _locationInput!,
+                          ),
+                        )
+                      : const SizedBox.shrink(),
                 ],
               ),
               Padding(
@@ -252,38 +272,10 @@ class _CreateEventPageState extends State<CreateEventPage> {
       'id': '${dateInput.text}-${TimeOfDay.now()}',
       'name': nameInput.text,
       "description": descriptionInput.text,
-      "location": const LatLng(45.47430, 9.16951),
+      "location": _locationInput,
       "date-time": DateTime(2023, 12, 7, 15, 30),
       "icon": selectedImage,
     };
     addEvent(event);
-  }
-}
-
-class MapView extends StatefulWidget {
-  const MapView({super.key});
-
-  @override
-  State<MapView> createState() => _FindPageState();
-}
-
-class _FindPageState extends State<MapView> {
-  late GoogleMapController mapController;
-
-  final LatLng _center = const LatLng(45.46427, 9.18951);
-
-  Future<void> _onMapCreated(GoogleMapController controller) async {
-    mapController = controller;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GoogleMap(
-        liteModeEnabled: true,
-        zoomControlsEnabled: false,
-        zoomGesturesEnabled: false,
-        mapToolbarEnabled: false,
-        onMapCreated: _onMapCreated,
-        initialCameraPosition: CameraPosition(target: _center, zoom: 11));
   }
 }

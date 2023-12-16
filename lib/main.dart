@@ -1,7 +1,6 @@
 import 'package:dima_project/create_event_page.dart';
 import 'package:dima_project/find_page.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,9 +15,9 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         //fontFamily: GoogleFonts.manropeTextTheme(baseTheme.textTheme),
-        textTheme: GoogleFonts.latoTextTheme()
+
         //titleMedium: TextStyle(fontSize: , fontWeight: FontWeight.w700)
-        ,
+
         colorScheme: ColorScheme.fromSeed(
             seedColor: Colors.lightGreen, brightness: Brightness.light),
         useMaterial3: true,
