@@ -10,7 +10,7 @@ class LocationPicker extends StatefulWidget {
 }
 
 class _LocationPickerState extends State<LocationPicker> {
-  Set<Marker> _markers = {};
+  final Set<Marker> _markers = {};
   late GoogleMapController mapController;
 
   final TextEditingController _locationInput = TextEditingController();
@@ -40,7 +40,7 @@ class _LocationPickerState extends State<LocationPicker> {
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      icon: Icon(Icons.arrow_back_ios_new)),
+                      icon: const Icon(Icons.arrow_back_ios_new)),
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(

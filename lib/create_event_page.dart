@@ -1,9 +1,11 @@
-import 'dart:ffi';
+import 'dart:io';
+import 'dart:math';
 
 import 'package:dima_project/events_manager.dart';
 import 'package:dima_project/location_picker.dart';
 import 'package:dima_project/map_viewer.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:dima_project/image_selector.dart';
@@ -21,9 +23,14 @@ class _CreateEventPageState extends State<CreateEventPage> {
   TextEditingController nameInput = TextEditingController();
   TextEditingController descriptionInput = TextEditingController();
 
+  DateTime? selectedDate;
+  TimeOfDay? selectedTime;
+
+  final List<XFile?> _images = [];
+
   LatLng? _locationInput;
 
-  String selectedImage = "";
+  String selectedIcon = "";
 
   bool allDay = false;
   @override
@@ -53,7 +60,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                               builder: (BuildContext context) {
                                 return ImageSelectionDialog(
                                     onImageSelected: (String imageName) {
-                                  selectedImage = imageName;
+                                  selectedIcon = imageName;
                                   setState(() {});
 
                                   // Handle the selected image
@@ -67,9 +74,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
                             border: Border.all(color: Colors.grey.shade600),
                             borderRadius: BorderRadius.circular(30),
                           ),
-                          child: selectedImage == ""
+                          child: selectedIcon == ""
                               ? const Icon(Icons.add_box_rounded)
-                              : ClipOval(child: Image.asset(selectedImage)),
+                              : ClipOval(child: Image.asset(selectedIcon)),
                         ),
                       ),
                     ),
@@ -157,6 +164,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                               lastDate: DateTime(2100));
                           if (pickedDate != null) {
                             setState(() {
+                              selectedDate = pickedDate;
                               dateInput.text =
                                   DateFormat('dd-MM-yyyy').format(pickedDate);
                             });
@@ -187,6 +195,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                                     context: context,
                                   );
                                   if (pickedTime != null) {
+                                    selectedTime = pickedTime;
                                     String formattedTime =
                                         DateFormat('hh:mm').format(
                                       DateTime(2020, 1, 1, pickedTime.hour,
@@ -253,6 +262,32 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
               ),
+              SizedBox(
+                height: _images.isEmpty ? 50 : 100,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _images.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index == _images.length) {
+                      return IconButton(
+                          onPressed: () async {
+                            List<XFile?> pickedImages =
+                                await ImagePicker().pickMultiImage();
+                            _images.addAll(pickedImages);
+                            setState(() {});
+                          },
+                          icon: const Icon(Icons.add_photo_alternate_outlined));
+                    }
+                    return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Image.file(
+                          File(_images[index]!.path),
+                          width: 100,
+                          height: 100,
+                        ));
+                  },
+                ),
+              ),
               Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: ElevatedButton(
@@ -267,15 +302,54 @@ class _CreateEventPageState extends State<CreateEventPage> {
         ));
   }
 
-  void _createEvent() {
+  Future<void> _createEvent() async {
+    if (nameInput.text.isEmpty ||
+        descriptionInput.text.isEmpty ||
+        _locationInput == null ||
+        selectedDate == null ||
+        (!allDay && selectedTime == null) ||
+        selectedIcon == null) {
+      // Se uno degli elementi è nullo, mostra una finestra di dialogo
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Fill out all the fields'),
+            content: const Text(
+                'Please make sure to fill out all the fields before creating the event.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+
     Map<String, dynamic> event = {
-      'id': '${dateInput.text}-${TimeOfDay.now()}',
+      'id': '${Random().nextInt(9999999)}A',
       'name': nameInput.text,
       "description": descriptionInput.text,
-      "location": _locationInput,
-      "date-time": DateTime(2023, 12, 7, 15, 30),
-      "icon": selectedImage,
+      "location": {
+        "lat": _locationInput!.latitude,
+        "lng": _locationInput!.longitude
+      },
+      "date-time": DateTime(selectedDate!.year, selectedDate!.month,
+          selectedDate!.day, selectedTime!.hour, selectedTime!.minute),
+      "icon": selectedIcon,
+      "all-day": allDay,
+      "images": _images,
     };
-    addEvent(event);
+    OverlayEntry overlayEntry = OverlayEntry(
+        builder: (context) => const Positioned(
+            child: Center(child: CircularProgressIndicator())));
+    Overlay.of(context).insert(overlayEntry);
+    await saveEvent(event);
+    overlayEntry.remove();
   }
 }

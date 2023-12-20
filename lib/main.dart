@@ -1,8 +1,13 @@
 import 'package:dima_project/create_event_page.dart';
 import 'package:dima_project/find_page.dart';
+import 'package:dima_project/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
