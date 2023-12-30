@@ -239,10 +239,13 @@ class _CreateEventPageState extends State<CreateEventPage> {
                         children: [Icon(Icons.pin_drop), Text("Pick location")],
                       )),
                   _locationInput != null
-                      ? SizedBox.square(
-                          dimension: 150,
-                          child: MapView(
-                            center: _locationInput!,
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: SizedBox.square(
+                            dimension: 150,
+                            child: MapView(
+                              center: _locationInput!,
+                            ),
                           ),
                         )
                       : const SizedBox.shrink(),
@@ -308,7 +311,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
         _locationInput == null ||
         selectedDate == null ||
         (!allDay && selectedTime == null) ||
-        selectedIcon == null) {
+        selectedIcon == "") {
       // Se uno degli elementi è nullo, mostra una finestra di dialogo
       showDialog(
         context: context,

@@ -1,5 +1,4 @@
 import 'package:dima_project/events_details_page.dart';
-import 'package:dima_project/events_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -13,6 +12,11 @@ class EventsListView extends StatefulWidget {
 }
 
 class _EventsListViewState extends State<EventsListView> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,23 +46,32 @@ class _EventsListViewState extends State<EventsListView> {
               child: Card(
                 child: Container(
                   height: 70,
-                  child: Row(children: [
-                    Image.asset(event["icon"]),
-                    Column(
-                      children: [
-                        Text(event["name"]),
-                        Text(event["all-day"]
-                            ? DateFormat("dd-MM-yy")
-                                .format(DateTime.fromMillisecondsSinceEpoch(
-                                    event["date-time"].seconds * 1000))
-                                .toString()
-                            : DateFormat("dd-MM-yy  hh:mm")
-                                .format(DateTime.fromMillisecondsSinceEpoch(
-                                    event["date-time"].seconds * 1000))
-                                .toString()),
-                      ],
-                    )
-                  ]),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(children: [
+                      Image.asset(event["icon"]),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Expanded(
+                              child: Text(
+                            event["name"],
+                            style: Theme.of(context).textTheme.titleMedium,
+                            overflow: TextOverflow.ellipsis,
+                          )),
+                          Text(event["all-day"]
+                              ? DateFormat("dd-MM-yy")
+                                  .format(DateTime.fromMillisecondsSinceEpoch(
+                                      event["date-time"].seconds * 1000))
+                                  .toString()
+                              : DateFormat("dd-MM-yy  hh:mm")
+                                  .format(DateTime.fromMillisecondsSinceEpoch(
+                                      event["date-time"].seconds * 1000))
+                                  .toString()),
+                        ],
+                      )
+                    ]),
+                  ),
                 ),
               ),
             );

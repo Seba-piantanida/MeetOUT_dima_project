@@ -68,8 +68,9 @@ class _FindPageState extends State<FindPage> {
                           icon: const Icon(Icons.replay_outlined))),
                   Expanded(
                     child: TextField(
-                      onSubmitted: (value) {
-                        _getCoordinates(value, context);
+                      onSubmitted: (value) async {
+                        await _getCoordinates(value, context);
+                        _generateMarkers();
                       },
                       controller: _locationInput,
                       decoration: const InputDecoration(
@@ -84,13 +85,20 @@ class _FindPageState extends State<FindPage> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: IconButton(
-                        onPressed: () {
-                          print("eventi ciao: $events");
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      EventsListView(this.events)));
+                        onPressed: () async {
+                          BuildContext currentContext = context;
+                          _generateMarkers();
+                          LatLngBounds bounds =
+                              await mapController.getVisibleRegion();
+
+                          events = await getEventsNearby(bounds, 0.5);
+                          if (context.mounted) {
+                            Navigator.push(
+                                currentContext,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        EventsListView(events)));
+                          }
                         },
                         icon: const Icon(Icons.align_horizontal_left_rounded)),
                   )
@@ -120,7 +128,7 @@ class _FindPageState extends State<FindPage> {
     LatLngBounds bounds = await mapController.getVisibleRegion();
 
     events = await getEventsNearby(bounds, 0.5);
-    print(events);
+
     for (int i = 0; i < events.length; i++) {
       BitmapDescriptor markerIcon = await BitmapDescriptor.fromAssetImage(
           const ImageConfiguration(), events[i]["icon"]);
@@ -146,18 +154,22 @@ class _FindPageState extends State<FindPage> {
         await mapController.animateCamera(CameraUpdate.newLatLng(
           LatLng(locations.first.latitude, locations.first.longitude),
         ));
-        _generateMarkers();
+        await _generateMarkers();
       } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("Location not found"),
+            duration: Duration(seconds: 2),
+          ));
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Location not found"),
+          content: Text("Error gerring the addres"),
           duration: Duration(seconds: 2),
         ));
       }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Error gerring the addres"),
-        duration: Duration(seconds: 2),
-      ));
     }
   }
 

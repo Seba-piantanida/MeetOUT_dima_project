@@ -1,4 +1,7 @@
+import 'package:dima_project/map_viewer.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 
 class EventDetailsPage extends StatelessWidget {
   final dynamic event;
@@ -17,7 +20,7 @@ class EventDetailsPage extends StatelessWidget {
               title: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
                 Image.asset(
                   event["icon"],
-                  scale: 2,
+                  scale: 2.8,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 10),
@@ -42,55 +45,87 @@ class EventDetailsPage extends StatelessWidget {
             ),
           ),
           SliverList.list(children: <Widget>[
-            Text(
-              "Description",
-              style: Theme.of(context).textTheme.headlineMedium,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Description",
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                  Text(
+                    event["all-day"]
+                        ? DateFormat("dd-MM-yy")
+                            .format(DateTime.fromMillisecondsSinceEpoch(
+                                event["date-time"].seconds * 1000))
+                            .toString()
+                        : DateFormat("dd-MM-yy  hh:mm")
+                            .format(DateTime.fromMillisecondsSinceEpoch(
+                                event["date-time"].seconds * 1000))
+                            .toString(),
+                    style: Theme.of(context).textTheme.labelSmall,
+                  )
+                ],
+              ),
             ),
-            Text(event["description"]),
-            Container(
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(20)),
+                  child: Text(event["description"])),
+            ),
+            event["images"].length == 0
+                ? const SizedBox.shrink()
+                : Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      height: 200,
+                      width: 100,
+                      child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: event["images"].length == 0
+                              ? 0
+                              : event["images"].length,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () {},
+                              child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: Image.network(
+                                          event["images"][index]))),
+                            );
+                          }),
+                    ),
+                  ),
+            Text("data"),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                height: 150,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: MapView(
+                    center: LatLng(
+                      event["location"]["lat"],
+                      event["location"]["lng"],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(
               height: 200,
-              width: 100,
-              child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: event["images"].length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: Image.network(event["images"][index])));
-                  }),
-            ),
-            Container(
-              color: Colors.blue,
-              height: 2000,
             )
-          ])
+          ]),
         ],
       ),
-    );
-  }
-}
-
-class ImageZoomPage extends StatelessWidget {
-  final String imageUrl;
-
-  const ImageZoomPage({super.key, required this.imageUrl});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: GestureDetector(
-        onTap: () {
-          Navigator.pop(context);
-        },
-        child: Center(
-          child: Hero(
-            tag: 'imageHero${imageUrl.hashCode}',
-            child: Image.network(imageUrl),
-          ),
-        ),
-      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton:
+          FloatingActionButton.extended(label: Text("Join"), onPressed: () {}),
     );
   }
 }
