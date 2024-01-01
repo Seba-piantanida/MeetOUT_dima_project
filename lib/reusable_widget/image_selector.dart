@@ -16,7 +16,7 @@ class ImageSelectionDialog extends StatelessWidget {
         height: 300,
         width: double.maxFinite,
         child: FutureBuilder<List<String>>(
-          future: _getAssetImages(context),
+          future: _getAssetImages(context, "assets/events_icons/"),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               List<String>? imagePaths = snapshot.data;
@@ -53,13 +53,14 @@ class ImageSelectionDialog extends StatelessWidget {
     );
   }
 
-  Future<List<String>> _getAssetImages(BuildContext context) async {
+  Future<List<String>> _getAssetImages(BuildContext context, String uri) async {
     var assetsFile =
         await DefaultAssetBundle.of(context).loadString('AssetManifest.json');
     final Map<String, dynamic> manifestMap = json.decode(assetsFile);
 
-    List<String> listImage =
-        manifestMap.keys.where((String key) => key.contains('.png')).toList();
+    List<String> listImage = manifestMap.keys
+        .where((String key) => key.contains('.png') && key.contains(uri))
+        .toList();
 
     return listImage;
   }

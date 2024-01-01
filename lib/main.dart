@@ -1,6 +1,9 @@
+import 'package:dima_project/check_auth.dart';
 import 'package:dima_project/create_event_page.dart';
 import 'package:dima_project/find_page.dart';
 import 'package:dima_project/firebase_options.dart';
+import 'package:dima_project/profile_page.dart';
+import 'package:dima_project/signin_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -24,15 +27,17 @@ class MyApp extends StatelessWidget {
         //titleMedium: TextStyle(fontSize: , fontWeight: FontWeight.w700)
 
         colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.lightGreen, brightness: Brightness.light),
+            seedColor: Color.fromRGBO(255, 180, 50, 1.0),
+            brightness: Brightness.light),
         useMaterial3: true,
       ),
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.lightBlue, brightness: Brightness.dark),
+            seedColor: Color.fromRGBO(80, 100, 200, 1.0),
+            brightness: Brightness.dark),
       ),
-      themeMode: ThemeMode.dark,
-      home: const NavBar(),
+      themeMode: ThemeMode.system,
+      home: const AuthCheck(),
     );
   }
 }
@@ -68,7 +73,7 @@ class _NavBarState extends State<NavBar> {
         const Placeholder(),
         const FindPage(),
         const CreateEventPage(),
-        const Placeholder()
+        const ProfilePage()
       ][pageIndex],
     );
   }

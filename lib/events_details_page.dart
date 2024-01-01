@@ -1,4 +1,6 @@
-import 'package:dima_project/map_viewer.dart';
+import 'dart:ui';
+
+import 'package:dima_project/reusable_widget/map_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
@@ -24,20 +26,56 @@ class EventDetailsPage extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 10),
-                  child: Text(event["name"]),
+                  child: Text(
+                    event["name"],
+                    style: TextStyle(
+                        color: Theme.of(context).textTheme.titleMedium?.color),
+                  ),
                 )
               ]),
               background: event["images"].isEmpty
-                  ? Container(
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
-                      colors: [
-                        Colors.indigo.shade900,
-                        Colors.blue.shade800,
+                  ? Stack(
+                      children: [
+                        Positioned(
+                          left: -70,
+                          top: -20,
+                          child: Container(
+                            height: 200,
+                            width: 200,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: LinearGradient(colors: [
+                                Color.fromRGBO(255, 180, 50, 1.0),
+                                Color.fromRGBO(200, 90, 120, 1.0),
+                              ]),
+                            ),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                              child: Container(),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          right: -200,
+                          top: 70,
+                          child: Container(
+                            height: 400,
+                            width: 400,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: LinearGradient(colors: [
+                                Color.fromRGBO(120, 80, 180, 1.0),
+                                Color.fromRGBO(80, 100, 200, 1.0)
+                              ]),
+                            ),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                              child: Container(),
+                            ),
+                          ),
+                        ),
                       ],
-                    )))
+                    )
                   : Image.network(
                       event["images"][0],
                       fit: BoxFit.cover,

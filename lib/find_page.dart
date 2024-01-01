@@ -154,7 +154,6 @@ class _FindPageState extends State<FindPage> {
         await mapController.animateCamera(CameraUpdate.newLatLng(
           LatLng(locations.first.latitude, locations.first.longitude),
         ));
-        await _generateMarkers();
       } else {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(

@@ -2,13 +2,13 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:dima_project/events_manager.dart';
-import 'package:dima_project/location_picker.dart';
-import 'package:dima_project/map_viewer.dart';
+import 'package:dima_project/reusable_widget/location_picker.dart';
+import 'package:dima_project/reusable_widget/map_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:dima_project/image_selector.dart';
+import 'package:dima_project/reusable_widget/image_selector.dart';
 
 class CreateEventPage extends StatefulWidget {
   const CreateEventPage({super.key});
