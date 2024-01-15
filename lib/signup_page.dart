@@ -1,9 +1,8 @@
 import 'dart:ui';
 
-import 'package:dima_project/main.dart';
 import 'package:dima_project/reusable_widget/reusable_widget.dart';
+import 'package:dima_project/signup_page2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -16,12 +15,16 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _passwordTextController = TextEditingController();
   final TextEditingController _emailTextController = TextEditingController();
-  final TextEditingController _userNameTextController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text(
@@ -75,7 +78,7 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
             ),
           ),
-          Container(
+          SizedBox(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               child: SingleChildScrollView(
@@ -83,11 +86,6 @@ class _SignUpPageState extends State<SignUpPage> {
                 padding: const EdgeInsets.fromLTRB(20, 120, 20, 0),
                 child: Column(
                   children: <Widget>[
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    reusableTextField("Enter UserName", Icons.person_outline,
-                        false, _userNameTextController),
                     const SizedBox(
                       height: 20,
                     ),
@@ -101,16 +99,15 @@ class _SignUpPageState extends State<SignUpPage> {
                     const SizedBox(
                       height: 20,
                     ),
-                    firebaseUIButton(context, "Sign Up", () {
+                    firebaseUIButton(context, "Register", () {
                       FirebaseAuth.instance
                           .createUserWithEmailAndPassword(
                               email: _emailTextController.text,
                               password: _passwordTextController.text)
-                          .then((value) => Navigator.pushAndRemoveUntil(
+                          .then((value) => Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const NavBar()),
-                                (route) => false,
+                                    builder: (context) => const SignUpPage2()),
                               ));
                     })
                   ],

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:geoflutterfire2/geoflutterfire2.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -40,7 +41,7 @@ Future<void> saveEvent(Map<String, dynamic> event) async {
     try {
       // Upload the file to Firebase Storage
       await reference.putFile(file);
-      print("ciao 2");
+
       // Get the download URL of the uploaded file
       String imageUrl = await reference.getDownloadURL();
 
@@ -85,3 +86,74 @@ Future<List<Map<String, dynamic>>> getEventsNearby(
     return [];
   }
 }
+
+Future<Map<String, dynamic>> getEventById(String id) async {
+  Map<String, dynamic> result = {};
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  QuerySnapshot querySnapshot =
+      await firestore.collection('events').where('id', isEqualTo: id).get();
+  result = querySnapshot.docs[0].data() as Map<String, dynamic>;
+
+  return result;
+}
+
+addEvents(String eventId) async {
+  String? userId = FirebaseAuth.instance.currentUser?.uid;
+
+  if (userId != null) {
+    // Esegui una query per trovare il documento utente con 'user-id' uguale a userId
+    QuerySnapshot<Map<String, dynamic>> userQuery = await FirebaseFirestore
+        .instance
+        .collection('users')
+        .where('user-id', isEqualTo: userId)
+        .get();
+
+    if (userQuery.docs.isNotEmpty) {
+      // Se trovato, aggiungi l'evento all'array 'my-events'
+      DocumentReference<Map<String, dynamic>> userReference =
+          userQuery.docs[0].reference;
+      await userReference.update({
+        'events': FieldValue.arrayUnion([eventId]),
+      });
+      print("evento salvato nei miei eventi");
+    } else {
+      print('Documento utente non trovato.');
+      // Gestire il caso in cui il documento utente non è stato trovato
+    }
+  } else {
+    print('Utente non autenticato.');
+    // Gestire il caso in cui l'utente non è autenticato
+  }
+}
+
+Future<void> addToMyEvents(String eventId) async {
+  String? userId = FirebaseAuth.instance.currentUser?.uid;
+
+  if (userId != null) {
+    // Esegui una query per trovare il documento utente con 'user-id' uguale a userId
+    QuerySnapshot<Map<String, dynamic>> userQuery = await FirebaseFirestore
+        .instance
+        .collection('users')
+        .where('user-id', isEqualTo: userId)
+        .get();
+
+    if (userQuery.docs.isNotEmpty) {
+      // Se trovato, aggiungi l'evento all'array 'my-events'
+      DocumentReference<Map<String, dynamic>> userReference =
+          userQuery.docs[0].reference;
+      await userReference.update({
+        'my-events': FieldValue.arrayUnion([eventId]),
+      });
+      print("evento salvato nei miei eventi");
+    } else {
+      print('Documento utente non trovato.');
+      // Gestire il caso in cui il documento utente non è stato trovato
+    }
+  } else {
+    print('Utente non autenticato.');
+    // Gestire il caso in cui l'utente non è autenticato
+  }
+}
+
+joinEvent(String eventId) async {}

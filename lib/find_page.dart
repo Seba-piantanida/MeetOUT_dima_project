@@ -1,5 +1,5 @@
 import 'package:dima_project/events_details_page.dart';
-import 'package:dima_project/events_list_view.dart';
+import 'package:dima_project/reusable_widget/events_list_view.dart';
 import 'package:dima_project/events_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -69,8 +69,7 @@ class _FindPageState extends State<FindPage> {
                   Expanded(
                     child: TextField(
                       onSubmitted: (value) async {
-                        await _getCoordinates(value, context);
-                        _generateMarkers();
+                        _getCoordinates(value, context);
                       },
                       controller: _locationInput,
                       decoration: const InputDecoration(
@@ -154,6 +153,8 @@ class _FindPageState extends State<FindPage> {
         await mapController.animateCamera(CameraUpdate.newLatLng(
           LatLng(locations.first.latitude, locations.first.longitude),
         ));
+        await Future.delayed(const Duration(milliseconds: 1000));
+        _generateMarkers();
       } else {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -165,10 +166,11 @@ class _FindPageState extends State<FindPage> {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Error gerring the addres"),
+          content: Text("Error resolving the addres"),
           duration: Duration(seconds: 2),
         ));
       }
+      return;
     }
   }
 

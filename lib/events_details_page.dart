@@ -1,13 +1,31 @@
 import 'dart:ui';
 
+import 'package:dima_project/events_manager.dart';
 import 'package:dima_project/reusable_widget/map_viewer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 
-class EventDetailsPage extends StatelessWidget {
+class EventDetailsPage extends StatefulWidget {
   final dynamic event;
   const EventDetailsPage(this.event, {super.key});
+
+  @override
+  State<EventDetailsPage> createState() => _EventDetailsPageState();
+}
+
+class _EventDetailsPageState extends State<EventDetailsPage> {
+  String _address = '';
+  bool imOwner = true;
+
+  @override
+  void initState() {
+    _imOwner();
+    _getAddress();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,21 +37,30 @@ class EventDetailsPage extends StatelessWidget {
             floating: true,
             expandedHeight: 160,
             flexibleSpace: FlexibleSpaceBar(
-              title: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                Image.asset(
-                  event["icon"],
-                  scale: 2.8,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Text(
-                    event["name"],
-                    style: TextStyle(
-                        color: Theme.of(context).textTheme.titleMedium?.color),
+              title: FittedBox(
+                fit: BoxFit.scaleDown,
+                child:
+                    Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                  Image.asset(
+                    widget.event["icon"],
+                    scale: 2.8,
                   ),
-                )
-              ]),
-              background: event["images"].isEmpty
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        widget.event["name"],
+                        overflow: TextOverflow.fade,
+                        style: TextStyle(
+                            color:
+                                Theme.of(context).textTheme.titleMedium?.color),
+                      ),
+                    ),
+                  )
+                ]),
+              ),
+              background: widget.event["images"].isEmpty
                   ? Stack(
                       children: [
                         Positioned(
@@ -77,55 +104,47 @@ class EventDetailsPage extends StatelessWidget {
                       ],
                     )
                   : Image.network(
-                      event["images"][0],
+                      widget.event["images"][0],
                       fit: BoxFit.cover,
                     ),
             ),
           ),
-          SliverList.list(children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
+          SliverPadding(
+            padding: const EdgeInsets.all(14),
+            sliver: SliverList.list(children: <Widget>[
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     "Description",
-                    style: Theme.of(context).textTheme.headlineMedium,
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                   Text(
-                    event["all-day"]
+                    widget.event["all-day"]
                         ? DateFormat("dd-MM-yy")
                             .format(DateTime.fromMillisecondsSinceEpoch(
-                                event["date-time"].seconds * 1000))
+                                widget.event["date-time"].seconds * 1000))
                             .toString()
                         : DateFormat("dd-MM-yy  hh:mm")
                             .format(DateTime.fromMillisecondsSinceEpoch(
-                                event["date-time"].seconds * 1000))
+                                widget.event["date-time"].seconds * 1000))
                             .toString(),
                     style: Theme.of(context).textTheme.labelSmall,
                   )
                 ],
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                  decoration:
-                      BoxDecoration(borderRadius: BorderRadius.circular(20)),
-                  child: Text(event["description"])),
-            ),
-            event["images"].length == 0
-                ? const SizedBox.shrink()
-                : Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
+              Text(widget.event["description"]),
+              const Divider(),
+              widget.event["images"].length == 0
+                  ? const SizedBox.shrink()
+                  : SizedBox(
                       height: 200,
                       width: 100,
                       child: ListView.builder(
                           scrollDirection: Axis.horizontal,
-                          itemCount: event["images"].length == 0
+                          itemCount: widget.event["images"].length == 0
                               ? 0
-                              : event["images"].length,
+                              : widget.event["images"].length,
                           itemBuilder: (context, index) {
                             return GestureDetector(
                               onTap: () {},
@@ -134,36 +153,69 @@ class EventDetailsPage extends StatelessWidget {
                                   child: ClipRRect(
                                       borderRadius: BorderRadius.circular(20),
                                       child: Image.network(
-                                          event["images"][index]))),
+                                          widget.event["images"][index]))),
                             );
                           }),
                     ),
-                  ),
-            Text("data"),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
+              const SizedBox(
+                height: 10,
+              ),
+              Text(
+                "Location",
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              SizedBox(
                 height: 150,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: MapView(
                     center: LatLng(
-                      event["location"]["lat"],
-                      event["location"]["lng"],
+                      widget.event["location"]["lat"],
+                      widget.event["location"]["lng"],
                     ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 200,
-            )
-          ]),
+              const SizedBox(
+                height: 10,
+              ),
+              _address != '' ? Text(_address) : const SizedBox.shrink(),
+              const SizedBox(
+                height: 100,
+              )
+            ]),
+          ),
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton:
-          FloatingActionButton.extended(label: Text("Join"), onPressed: () {}),
+      floatingActionButton: Visibility(
+        visible: !imOwner,
+        child: FloatingActionButton.extended(
+            label: const Text("Join"),
+            onPressed: () => joinEvent(widget.event['id'])),
+      ),
     );
   }
+
+  _getAddress() async {
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+          widget.event["location"]["lat"], widget.event["location"]["lng"]);
+      Placemark place = placemarks[0];
+      setState(() {
+        _address = "${place.street}, ${place.locality},  ${place.country}";
+      });
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  _imOwner() async {
+    imOwner = widget.event['owner'] == FirebaseAuth.instance.currentUser?.uid;
+  }
+
+  _deleteEvent() {}
 }

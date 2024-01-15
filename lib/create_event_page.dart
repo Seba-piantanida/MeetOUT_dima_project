@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:dima_project/events_details_page.dart';
 import 'package:dima_project/events_manager.dart';
 import 'package:dima_project/reusable_widget/location_picker.dart';
 import 'package:dima_project/reusable_widget/map_viewer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -24,9 +26,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
   TextEditingController descriptionInput = TextEditingController();
 
   DateTime? selectedDate;
-  TimeOfDay? selectedTime;
+  TimeOfDay selectedTime = const TimeOfDay(hour: 0, minute: 0);
 
-  final List<XFile?> _images = [];
+  List<XFile?> _images = [];
 
   LatLng? _locationInput;
 
@@ -310,9 +312,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
         descriptionInput.text.isEmpty ||
         _locationInput == null ||
         selectedDate == null ||
-        (!allDay && selectedTime == null) ||
         selectedIcon == "") {
-      // Se uno degli elementi è nullo, mostra una finestra di dialogo
+      // if one of the elements is null show error dialog
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -333,9 +334,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
       );
       return;
     }
-
+    String id = '${Random().nextInt(9999999)}A';
     Map<String, dynamic> event = {
-      'id': '${Random().nextInt(9999999)}A',
+      'id': id,
       'name': nameInput.text,
       "description": descriptionInput.text,
       "location": {
@@ -343,16 +344,63 @@ class _CreateEventPageState extends State<CreateEventPage> {
         "lng": _locationInput!.longitude
       },
       "date-time": DateTime(selectedDate!.year, selectedDate!.month,
-          selectedDate!.day, selectedTime!.hour, selectedTime!.minute),
+          selectedDate!.day, selectedTime.hour, selectedTime.minute),
       "icon": selectedIcon,
       "all-day": allDay,
       "images": _images,
+      'owner': FirebaseAuth.instance.currentUser?.uid
     };
     OverlayEntry overlayEntry = OverlayEntry(
+        opaque: true,
         builder: (context) => const Positioned(
             child: Center(child: CircularProgressIndicator())));
     Overlay.of(context).insert(overlayEntry);
-    await saveEvent(event);
-    overlayEntry.remove();
+    try {
+      await saveEvent(event);
+      await addToMyEvents(id);
+      overlayEntry.remove();
+      var myEvent = await getEventById(id);
+      _resetFields();
+      // ignore: use_build_context_synchronously
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => EventDetailsPage(myEvent)));
+    } catch (e) {
+      overlayEntry.remove();
+      // ignore: use_build_context_synchronously
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Event cration failed'),
+            content: const Text(
+                'An error occured during the event creation please try again'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
+  _resetFields() {
+    dateInput.clear();
+    timeInput.clear();
+    nameInput.clear();
+    descriptionInput.clear();
+
+    _images = [];
+
+    _locationInput = null;
+
+    selectedIcon = "";
+
+    allDay = false;
+    setState(() {});
   }
 }
