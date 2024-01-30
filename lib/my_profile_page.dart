@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:dima_project/edit_profile_page.dart';
 import 'package:dima_project/events_manager.dart';
 import 'package:dima_project/profile_search_page.dart';
+import 'package:dima_project/reusable_widget/contacts_list_view.dart';
 import 'package:dima_project/reusable_widget/events_list_view.dart';
 import 'package:dima_project/signin_page.dart';
 import 'package:dima_project/user_manager.dart';
@@ -10,7 +11,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class MyProfilePage extends StatefulWidget {
-  const MyProfilePage({Key? key}) : super(key: key);
+  const MyProfilePage({super.key});
 
   @override
   State<MyProfilePage> createState() => _MyProfilePageState();
@@ -233,11 +234,11 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                 ? const Center(child: Text('No events yet'))
                                 : EventsListView(events, isPage: false),
                           ),
-                          Flex(
-                            direction: Axis.vertical,
-                            children: [
-                              Center(
-                                child: GestureDetector(
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8, left: 8),
+                            child: Column(
+                              children: [
+                                GestureDetector(
                                   onTap: () async {
                                     await Navigator.push(
                                       context,
@@ -246,10 +247,10 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                             const SearchProfilePage(),
                                       ),
                                     );
-                                    _getContacts();
+                                    getContacts();
                                   },
                                   child: const Padding(
-                                    padding: EdgeInsets.only(top: 30),
+                                    padding: EdgeInsets.only(top: 10),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -260,8 +261,14 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                     ),
                                   ),
                                 ),
-                              )
-                            ],
+                                contacts.isEmpty
+                                    ? const SizedBox.shrink()
+                                    : Expanded(
+                                        child: ContactsListView(
+                                        contacts,
+                                      )),
+                              ],
+                            ),
                           )
                         ],
                       ),
@@ -275,10 +282,10 @@ class _MyProfilePageState extends State<MyProfilePage> {
 
   _getUser() async {
     try {
-      user = await getUserById(FirebaseAuth.instance.currentUser?.uid);
+      user = await fetchMyUser();
       _getData();
     } catch (e) {
-      print("error fetching data");
+      print("error fetching data $e");
     }
     if (user.isEmpty) {
       return;
@@ -316,6 +323,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
     for (var contact in user['contacts']) {
       try {
         var con = await getUserById(contact as String);
+        print('contacts: $con');
         contacts.add(con);
       } catch (e) {
         print('error getting contacts');
@@ -324,8 +332,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
     setState(() {});
   }
 
-  _getContacts() async {
-    for (var contact in user['contacts']) {
+  getContacts() async {
+    print("getting contacts: $getMycontacts()");
+    for (var contact in getMycontacts()) {
       try {
         var con = await getUserById(contact as String);
         contacts.add(con);

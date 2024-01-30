@@ -253,13 +253,13 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       : const SizedBox.shrink(),
                 ],
               ),
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Text(
-                  "Partecipants",
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.all(15.0),
+              //   child: Text(
+              //     "Partecipants",
+              //     style: Theme.of(context).textTheme.titleLarge,
+              //   ),
+              // ),
               Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Text(

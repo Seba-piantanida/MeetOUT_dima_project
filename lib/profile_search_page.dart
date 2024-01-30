@@ -49,15 +49,29 @@ class _SearchProfilePageState extends State<SearchProfilePage> {
               ),
             ),
           ),
-          userList == null ? const SizedBox.shrink() : userList!
+          userList == null ? const SizedBox.shrink() : userList!,
+          users.isEmpty
+              ? const SizedBox.shrink()
+              : GestureDetector(
+                  onTap: _clear,
+                  child: const Text(
+                    "clear",
+                    style: TextStyle(decoration: TextDecoration.underline),
+                  ),
+                )
         ]),
       ),
     );
   }
 
+  _clear() {
+    users = [];
+    setState(() {});
+  }
+
   _getUserList(String username) async {
     try {
-      users = await getUsersByName(username);
+      users.addAll(await getUsersByName(username));
       if (users.isEmpty) {
         userList = const Center(
           child: Text("No user found"),

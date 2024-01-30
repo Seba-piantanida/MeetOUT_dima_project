@@ -3,25 +3,34 @@ import 'package:flutter/material.dart';
 
 class ContactsListView extends StatefulWidget {
   final List<dynamic> contacts;
-  const ContactsListView(this.contacts, {super.key});
+  final Function? onPopCallback;
+  const ContactsListView(this.contacts, {this.onPopCallback, super.key});
 
   @override
   State<ContactsListView> createState() => _ContactsListViewState();
 }
 
 class _ContactsListViewState extends State<ContactsListView> {
+  bool flag = false;
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
         itemCount: widget.contacts.length,
         itemBuilder: (constext, index) {
           return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          ProfilePage(widget.contacts[index])));
+            onTap: () async {
+              if (!flag) {
+                flag = true;
+                await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            ProfilePage(widget.contacts[index])));
+
+                if (widget.onPopCallback != null) {
+                  //widget.onPopCallback!();
+                }
+              }
             },
             child: Card(
                 child: Padding(
@@ -43,7 +52,7 @@ class _ContactsListViewState extends State<ContactsListView> {
                   Expanded(
                     child: Text(
                       widget.contacts[index]['username'],
-                      style: Theme.of(context).textTheme.headlineMedium,
+                      style: Theme.of(context).textTheme.headlineSmall,
                       overflow: TextOverflow.ellipsis,
                     ),
                   )

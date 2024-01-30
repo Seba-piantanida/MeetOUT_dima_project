@@ -127,6 +127,29 @@ addEvents(String eventId) async {
   }
 }
 
+Future<bool> isInMyEvents(String eventId) async {
+  String? myId = FirebaseAuth.instance.currentUser?.uid;
+
+  if (myId == null) {
+    throw Exception("Not logged in");
+  }
+  // collection "users"
+  CollectionReference usersCollection =
+      FirebaseFirestore.instance.collection('users');
+
+  // fint user doc
+  QuerySnapshot querySnapshot =
+      await usersCollection.where('user-id', isEqualTo: myId).get();
+
+  if (querySnapshot.docs.isNotEmpty) {
+    List<dynamic> events = querySnapshot.docs.first.get('events') ?? [];
+
+    return events.contains(eventId);
+  } else {
+    throw Exception('event not found');
+  }
+}
+
 Future<void> addToMyEvents(String eventId) async {
   String? userId = FirebaseAuth.instance.currentUser?.uid;
 
@@ -156,4 +179,56 @@ Future<void> addToMyEvents(String eventId) async {
   }
 }
 
-joinEvent(String eventId) async {}
+joinEvent(String eventId) async {
+  String? myId = FirebaseAuth.instance.currentUser?.uid;
+
+  if (myId == null) {
+    throw Exception("Not logged in");
+  }
+  // collection "users"
+  CollectionReference usersCollection =
+      FirebaseFirestore.instance.collection('users');
+
+  // fint user doc
+  QuerySnapshot querySnapshot =
+      await usersCollection.where('user-id', isEqualTo: myId).get();
+
+  if (querySnapshot.docs.isNotEmpty) {
+    DocumentReference targetUserRef = querySnapshot.docs.first.reference;
+
+    List<dynamic> events = querySnapshot.docs.first.get('events') ?? [];
+
+    events.add(eventId);
+
+    //update doc
+    await targetUserRef.update({'events': events});
+  } else {
+    throw Exception('User not found');
+  }
+}
+
+quitEvent(String eventId) async {
+  String? myId = FirebaseAuth.instance.currentUser?.uid;
+
+  if (myId == null) {
+    throw Exception("Not logged in");
+  }
+
+  CollectionReference usersCollection =
+      FirebaseFirestore.instance.collection('users');
+
+  QuerySnapshot querySnapshot =
+      await usersCollection.where('user-id', isEqualTo: myId).get();
+
+  if (querySnapshot.docs.isNotEmpty) {
+    DocumentReference targetUserRef = querySnapshot.docs.first.reference;
+
+    List<dynamic> events = querySnapshot.docs.first.get('events') ?? [];
+
+    events.remove(eventId);
+
+    await targetUserRef.update({'events': events});
+  } else {
+    throw Exception('User not found');
+  }
+}

@@ -18,10 +18,13 @@ class EventDetailsPage extends StatefulWidget {
 
 class _EventDetailsPageState extends State<EventDetailsPage> {
   String _address = '';
+  bool loaded = false;
   bool imOwner = true;
+  bool isInMyevents = false;
 
   @override
   void initState() {
+    _isInMyEvents();
     _imOwner();
     _getAddress();
     super.initState();
@@ -192,10 +195,21 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Visibility(
-        visible: !imOwner,
-        child: FloatingActionButton.extended(
-            label: const Text("Join"),
-            onPressed: () => joinEvent(widget.event['id'])),
+        visible: !imOwner && loaded,
+        child: isInMyevents
+            ? FloatingActionButton.extended(
+                label: const Text("Quit"),
+                onPressed: () async {
+                  await quitEvent(widget.event['id']);
+                  _isInMyEvents();
+                })
+            : FloatingActionButton.extended(
+                label: const Text("Join"),
+                onPressed: () async {
+                  await joinEvent(widget.event['id']);
+
+                  _isInMyEvents();
+                }),
       ),
     );
   }
@@ -218,4 +232,10 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   }
 
   _deleteEvent() {}
+
+  _isInMyEvents() async {
+    isInMyevents = await isInMyEvents(widget.event['id']);
+    loaded = true;
+    setState(() {});
+  }
 }

@@ -38,26 +38,29 @@ class _EventsListViewState extends State<EventsListView> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(children: [
-                    Image.asset(event["icon"]),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Expanded(
-                            child: Text(
-                          event["name"],
-                          style: Theme.of(context).textTheme.titleMedium,
-                          overflow: TextOverflow.ellipsis,
-                        )),
-                        Text(event["all-day"]
-                            ? DateFormat("dd-MM-yy")
-                                .format(DateTime.fromMillisecondsSinceEpoch(
-                                    event["date-time"].seconds * 1000))
-                                .toString()
-                            : DateFormat("dd-MM-yy  hh:mm")
-                                .format(DateTime.fromMillisecondsSinceEpoch(
-                                    event["date-time"].seconds * 1000))
-                                .toString()),
-                      ],
+                    ClipOval(child: Image.asset(event["icon"])),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Expanded(
+                              child: Text(
+                            event["name"],
+                            style: Theme.of(context).textTheme.titleMedium,
+                            overflow: TextOverflow.ellipsis,
+                          )),
+                          Text(event["all-day"]
+                              ? DateFormat("dd-MM-yy")
+                                  .format(DateTime.fromMillisecondsSinceEpoch(
+                                      event["date-time"].seconds * 1000))
+                                  .toString()
+                              : DateFormat("dd-MM-yy  hh:mm")
+                                  .format(DateTime.fromMillisecondsSinceEpoch(
+                                      event["date-time"].seconds * 1000))
+                                  .toString()),
+                        ],
+                      ),
                     )
                   ]),
                 ),

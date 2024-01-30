@@ -46,7 +46,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           ? Visibility(
                               visible:
                                   !(FirebaseAuth.instance.currentUser?.uid ==
-                                      widget.user['user-id']),
+                                          widget.user['user-id']) &&
+                                      _isInMyContacts,
                               child: Padding(
                                 padding: const EdgeInsets.only(right: 20),
                                 child: ElevatedButton(
@@ -98,7 +99,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           : Visibility(
                               visible:
                                   !(FirebaseAuth.instance.currentUser?.uid ==
-                                      widget.user['user-id']),
+                                          widget.user['user-id']) &&
+                                      !_isInMyContacts,
                               child: Padding(
                                 padding: const EdgeInsets.only(right: 20),
                                 child: ElevatedButton(
@@ -109,6 +111,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       _isInMyContacts = true;
                                       setState(() {});
                                     } catch (e) {
+                                      print(e);
                                       // ignore: use_build_context_synchronously
                                       showDialog(
                                         context: context,
@@ -242,8 +245,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Column(
                   children: [
                     Container(
-                      constraints: BoxConstraints.expand(height: 50),
-                      child: TabBar(
+                      constraints: const BoxConstraints.expand(height: 50),
+                      child: const TabBar(
                         tabs: [
                           Tab(icon: Icon(Icons.list_rounded)),
                           Tab(icon: Icon(Icons.person_outline)),
@@ -282,6 +285,7 @@ class _ProfilePageState extends State<ProfilePage> {
         fit: BoxFit.cover,
       );
     }
+    _isInMyContacts = isInMyContacts(widget.user['user-id']);
     print('user visualizzato: ${widget.user}');
     for (var eventsId in widget.user['my-events']) {
       try {
