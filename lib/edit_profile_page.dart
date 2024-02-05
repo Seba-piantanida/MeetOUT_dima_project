@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:dima_project/reusable_widget/reusable_widget.dart';
+import 'package:dima_project/user_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -22,28 +23,36 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        actions: const [
+        centerTitle: true,
+        actions: [
           Padding(
-            padding: EdgeInsets.only(right: 20),
-            child: Text(
-              "SAVE",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+            padding: const EdgeInsets.only(right: 20),
+            child: GestureDetector(
+              onTap: updateProfile,
+              child: const Text(
+                "SAVE",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+              ),
             ),
           )
         ],
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () => Navigator.of(context).pop(),
         ),
         backgroundColor: Colors.transparent,
         title: const Text(
           "Edit profile",
-          style: TextStyle(
-              color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
       ),
       body: Stack(
         children: [
+          Container(
+            color: Colors.black26,
+            height: double.infinity,
+            width: double.infinity,
+          ),
           Positioned(
             left: -100,
             top: 10,
@@ -147,5 +156,80 @@ class _EditProfilePageState extends State<EditProfilePage> {
         ],
       ),
     );
+  }
+
+  void updateProfile() async {
+    if (_profilePic != null) {
+      try {
+        await changeProfilePic(_profilePic!);
+        Navigator.of(context).pop();
+      } catch (e) {
+        showDialog<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Error'),
+              content: const Text('error updating profile picture, try leter'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    }
+    if (_userNameController.text.length >= 4) {
+      try {
+        await changeProfileName(_userNameController.text);
+        Navigator.of(context).pop();
+      } catch (e) {
+        showDialog<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Error'),
+              content: const Text('error updating profile picture, try leter'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    }
+    if (_bioController.text.isNotEmpty) {
+      try {
+        await changeProfileBio(_bioController.text);
+        Navigator.of(context).pop();
+      } catch (e) {
+        showDialog<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Error'),
+              content: const Text('error updating profile picture, try leter'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    }
   }
 }

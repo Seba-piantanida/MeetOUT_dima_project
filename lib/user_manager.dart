@@ -202,6 +202,70 @@ removeContact(String userId) async {
   }
 }
 
+changeProfilePic(XFile profilePic) async {
+  String picUrl = '';
+  File file = File(profilePic.path);
+  String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+  Reference reference = FirebaseStorage.instance
+      .ref()
+      .child('profilePics/${FirebaseAuth.instance.currentUser?.uid}/$fileName');
+
+  await reference.putFile(file);
+
+  picUrl = await reference.getDownloadURL();
+
+  if (picUrl != '') {
+    CollectionReference usersCollection =
+        FirebaseFirestore.instance.collection('users');
+
+    QuerySnapshot querySnapshot = await usersCollection
+        .where('user-id', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      DocumentSnapshot userDoc = querySnapshot.docs.first;
+
+      DocumentReference userRef = usersCollection.doc(userDoc.id);
+
+      await userRef.update({'profile-pic': picUrl});
+    }
+  }
+}
+
+changeProfileBio(String bio) async {
+  CollectionReference usersCollection =
+      FirebaseFirestore.instance.collection('users');
+
+  QuerySnapshot querySnapshot = await usersCollection
+      .where('user-id', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+      .get();
+
+  if (querySnapshot.docs.isNotEmpty) {
+    DocumentSnapshot userDoc = querySnapshot.docs.first;
+
+    DocumentReference userRef = usersCollection.doc(userDoc.id);
+
+    await userRef.update({'bio': bio});
+  }
+}
+
+changeProfileName(String username) async {
+  CollectionReference usersCollection =
+      FirebaseFirestore.instance.collection('users');
+
+  QuerySnapshot querySnapshot = await usersCollection
+      .where('user-id', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+      .get();
+
+  if (querySnapshot.docs.isNotEmpty) {
+    DocumentSnapshot userDoc = querySnapshot.docs.first;
+
+    DocumentReference userRef = usersCollection.doc(userDoc.id);
+
+    await userRef.update({'username': username});
+  }
+}
+
 List<dynamic> getMycontacts() {
   return _myContacts;
 }

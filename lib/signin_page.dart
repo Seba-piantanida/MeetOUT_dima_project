@@ -65,70 +65,77 @@ class _SignInPageState extends State<SignInPage> {
               ),
             ),
           ),
-          SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                    20, MediaQuery.of(context).size.height * 0.1, 20, 0),
-                child: Column(children: [
-                  Image.asset(
-                    "assets/logo/logo_white_s.png",
-                    height: 150,
-                    width: 150,
-                  ),
-                  Text(
-                    "Welcome!",
-                    style: TextStyle(
-                      fontSize: 40,
-                      fontWeight: FontWeight.w900,
-                      shadows: [
-                        Shadow(
-                          color: Colors.black.withOpacity(0.3),
-                          blurRadius: 5,
-                          offset: const Offset(3, 3),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  reusableTextField("Username", Icons.person_outlined, false,
-                      _userNameController),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  reusableTextField("Password", Icons.lock_outline, true,
-                      _passwordController),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  firebaseUIButton(context, "Login", _signin),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "Don't have an account?",
-                        style: TextStyle(color: Colors.white70),
+          Center(
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 600),
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(
+                        20, MediaQuery.of(context).size.height * 0.1, 20, 0),
+                    child: Column(children: [
+                      Image.asset(
+                        "assets/logo/logo_white_s.png",
+                        height: 150,
+                        width: 150,
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const SignUpPage()));
-                        },
-                        child: const Text(
-                          "Sign Up",
-                          style: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
+                      Text(
+                        "Welcome!",
+                        style: TextStyle(
+                          fontSize: 40,
+                          fontWeight: FontWeight.w900,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black.withOpacity(0.3),
+                              blurRadius: 5,
+                              offset: const Offset(3, 3),
+                            ),
+                          ],
                         ),
+                      ),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      reusableTextField("Username", Icons.person_outlined,
+                          false, _userNameController),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      reusableTextField("Password", Icons.lock_outline, true,
+                          _passwordController),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      firebaseUIButton(context, "Login", _signin),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "Don't have an account?",
+                            style: TextStyle(color: Colors.white70),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const SignUpPage()));
+                            },
+                            child: const Text(
+                              "Sign Up",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          )
+                        ],
                       )
-                    ],
-                  )
-                ]),
+                    ]),
+                  ),
+                ),
               ),
             ),
           ),

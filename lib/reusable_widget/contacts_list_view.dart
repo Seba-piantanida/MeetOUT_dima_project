@@ -12,6 +12,7 @@ class ContactsListView extends StatefulWidget {
 
 class _ContactsListViewState extends State<ContactsListView> {
   bool flag = false;
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -40,14 +41,21 @@ class _ContactsListViewState extends State<ContactsListView> {
                 child: Row(children: [
                   Padding(
                     padding: const EdgeInsets.only(left: 10, right: 20),
-                    child: SizedBox(
+                    child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.3),
+                            shape: BoxShape.circle),
                         height: 60,
                         width: 60,
                         child: ClipOval(
-                            child: Image.network(
-                          widget.contacts[index]['profile-pic'],
-                          fit: BoxFit.cover,
-                        ))),
+                            child: widget.contacts[index]['profile-pic'] == ''
+                                ? Center(
+                                    child: Text(
+                                        widget.contacts[index]["username"][0]))
+                                : Image.network(
+                                    widget.contacts[index]['profile-pic'],
+                                    fit: BoxFit.cover,
+                                  ))),
                   ),
                   Expanded(
                     child: Text(

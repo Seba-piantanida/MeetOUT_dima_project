@@ -254,21 +254,24 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                     Expanded(
-                      child: TabBarView(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(right: 8, left: 8),
-                            child: events.isEmpty
-                                ? const Center(child: Text('No events yet'))
-                                : EventsListView(events, isPage: false),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8, right: 8),
-                            child: contacts.isEmpty
-                                ? const Center(child: Text("No contacts"))
-                                : ContactsListView(contacts),
-                          ),
-                        ],
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 700),
+                        child: TabBarView(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8, left: 8),
+                              child: events.isEmpty
+                                  ? const Center(child: Text('No events yet'))
+                                  : EventsListView(events, isPage: false),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8, right: 8),
+                              child: contacts.isEmpty
+                                  ? const Center(child: Text("No contacts"))
+                                  : ContactsListView(contacts),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -279,7 +282,8 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   _getData() async {
-    if (widget.user["profile-pic"] != null) {
+    if (widget.user["profile-pic"] != null &&
+        widget.user["profile-pic"] != '') {
       profilePic = Image.network(
         widget.user["profile-pic"],
         fit: BoxFit.cover,

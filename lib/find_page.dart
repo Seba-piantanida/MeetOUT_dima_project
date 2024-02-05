@@ -38,88 +38,91 @@ class _FindPageState extends State<FindPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
-      GoogleMap(
-        minMaxZoomPreference: const MinMaxZoomPreference(10, 20),
-        zoomControlsEnabled: false,
-        mapToolbarEnabled: false,
-        onMapCreated: _onMapCreated,
-        initialCameraPosition: CameraPosition(target: _center, zoom: 14),
-        markers: _markers.values.toSet(),
-      ),
-      SafeArea(
-        child: Align(
-          alignment: Alignment.topCenter,
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor,
-                  borderRadius: const BorderRadius.all(Radius.circular(25))),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: IconButton(
-                          onPressed: () {
-                            _generateMarkers();
-                          },
-                          icon: const Icon(Icons.replay_outlined))),
-                  Expanded(
-                    child: TextField(
-                      onSubmitted: (value) async {
-                        _getCoordinates(value, context);
-                      },
-                      controller: _locationInput,
-                      decoration: const InputDecoration(
-                        hintText: 'Search...',
-                        border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(20))),
-                        contentPadding: EdgeInsets.all(8.0),
+    return Scaffold(
+      body: Stack(children: [
+        GoogleMap(
+          minMaxZoomPreference: const MinMaxZoomPreference(10, 20),
+          zoomControlsEnabled: false,
+          mapToolbarEnabled: false,
+          onMapCreated: _onMapCreated,
+          initialCameraPosition: CameraPosition(target: _center, zoom: 14),
+          markers: _markers.values.toSet(),
+        ),
+        SafeArea(
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    borderRadius: const BorderRadius.all(Radius.circular(25))),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: IconButton(
+                            onPressed: () {
+                              _generateMarkers();
+                            },
+                            icon: const Icon(Icons.replay_outlined))),
+                    Expanded(
+                      child: TextField(
+                        onSubmitted: (value) async {
+                          _getCoordinates(value, context);
+                        },
+                        controller: _locationInput,
+                        decoration: const InputDecoration(
+                          hintText: 'Search...',
+                          border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20))),
+                          contentPadding: EdgeInsets.all(8.0),
+                        ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: IconButton(
-                        onPressed: () async {
-                          BuildContext currentContext = context;
-                          _generateMarkers();
-                          LatLngBounds bounds =
-                              await mapController.getVisibleRegion();
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: IconButton(
+                          onPressed: () async {
+                            BuildContext currentContext = context;
+                            _generateMarkers();
+                            LatLngBounds bounds =
+                                await mapController.getVisibleRegion();
 
-                          events = await getEventsNearby(bounds, 0.5);
-                          if (context.mounted) {
-                            Navigator.push(
-                                currentContext,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        EventsListView(events)));
-                          }
-                        },
-                        icon: const Icon(Icons.align_horizontal_left_rounded)),
-                  )
-                ],
+                            events = await getEventsNearby(bounds, 0.5);
+                            if (context.mounted) {
+                              Navigator.push(
+                                  currentContext,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          EventsListView(events)));
+                            }
+                          },
+                          icon:
+                              const Icon(Icons.align_horizontal_left_rounded)),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
         ),
-      ),
-      Align(
-        alignment: Alignment.bottomCenter,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: selectedEvents != null
-              ? EventDetailsCard(
-                  selectedEvents,
-                  onClose: closeEventDetails,
-                )
-              : const SizedBox.expand(),
-        ),
-      )
-    ]);
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: selectedEvents != null
+                ? EventDetailsCard(
+                    selectedEvents,
+                    onClose: closeEventDetails,
+                  )
+                : const SizedBox.expand(),
+          ),
+        )
+      ]),
+    );
   }
 
   _generateMarkers() async {

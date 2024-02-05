@@ -41,24 +41,27 @@ class _LocationPickerState extends State<LocationPicker> {
                         Navigator.pop(context);
                       },
                       icon: const Icon(Icons.arrow_back_ios_new)),
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: Theme.of(context).cardColor,
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(21))),
-                      child: Expanded(
-                        child: TextField(
-                          onSubmitted: (value) {
-                            _getCoordinates(value);
-                          },
-                          controller: _locationInput,
-                          decoration: const InputDecoration(
-                            hintText: 'Search or tap and hold the map',
-                            border: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20))),
-                            contentPadding: EdgeInsets.all(8.0),
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 400),
+                    child: Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Theme.of(context).cardColor,
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(21))),
+                        child: Expanded(
+                          child: TextField(
+                            onSubmitted: (value) {
+                              _getCoordinates(value);
+                            },
+                            controller: _locationInput,
+                            decoration: const InputDecoration(
+                              hintText: 'Search or tap and hold the map',
+                              border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20))),
+                              contentPadding: EdgeInsets.all(8.0),
+                            ),
                           ),
                         ),
                       ),

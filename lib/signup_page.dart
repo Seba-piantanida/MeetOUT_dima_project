@@ -22,15 +22,15 @@ class _SignUpPageState extends State<SignUpPage> {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () => Navigator.of(context).pop(),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        centerTitle: true,
         title: const Text(
           "Sign Up",
-          style: TextStyle(
-              color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
       ),
       body: Stack(
@@ -78,41 +78,47 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
             ),
           ),
-          SizedBox(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              child: SingleChildScrollView(
-                  child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 120, 20, 0),
-                child: Column(
-                  children: <Widget>[
-                    const SizedBox(
-                      height: 20,
+          Center(
+            child: Container(
+              constraints: BoxConstraints(maxWidth: 600),
+              child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  child: SingleChildScrollView(
+                      child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 120, 20, 0),
+                    child: Column(
+                      children: <Widget>[
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        reusableTextField("Enter Email", Icons.person_outline,
+                            false, _emailTextController),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        reusableTextField("Enter Password", Icons.lock_outlined,
+                            true, _passwordTextController),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        firebaseUIButton(context, "Register", () {
+                          FirebaseAuth.instance
+                              .createUserWithEmailAndPassword(
+                                  email: _emailTextController.text,
+                                  password: _passwordTextController.text)
+                              .then((value) => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const SignUpPage2()),
+                                  ));
+                        })
+                      ],
                     ),
-                    reusableTextField("Enter Email", Icons.person_outline,
-                        false, _emailTextController),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    reusableTextField("Enter Password", Icons.lock_outlined,
-                        true, _passwordTextController),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    firebaseUIButton(context, "Register", () {
-                      FirebaseAuth.instance
-                          .createUserWithEmailAndPassword(
-                              email: _emailTextController.text,
-                              password: _passwordTextController.text)
-                          .then((value) => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const SignUpPage2()),
-                              ));
-                    })
-                  ],
-                ),
-              ))),
+                  ))),
+            ),
+          ),
         ],
       ),
     );

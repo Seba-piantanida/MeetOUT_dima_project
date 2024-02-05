@@ -3,6 +3,7 @@ import 'package:dima_project/create_event_page.dart';
 import 'package:dima_project/find_page.dart';
 import 'package:dima_project/firebase_options.dart';
 import 'package:dima_project/my_profile_page.dart';
+import 'package:dima_project/tablet_find_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -70,7 +71,9 @@ class _NavBarState extends State<NavBar> {
       ),
       body: <Widget>[
         const Placeholder(),
-        const FindPage(),
+        MediaQuery.of(context).size.width <= 600
+            ? const FindPage()
+            : const TabletFindPage(),
         const CreateEventPage(),
         const MyProfilePage()
       ][pageIndex],

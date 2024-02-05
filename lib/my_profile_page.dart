@@ -1,10 +1,12 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dima_project/edit_profile_page.dart';
 import 'package:dima_project/events_manager.dart';
 import 'package:dima_project/profile_search_page.dart';
 import 'package:dima_project/reusable_widget/contacts_list_view.dart';
 import 'package:dima_project/reusable_widget/events_list_view.dart';
+import 'package:dima_project/settings_page.dart';
 import 'package:dima_project/signin_page.dart';
 import 'package:dima_project/user_manager.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -48,10 +50,16 @@ class _MyProfilePageState extends State<MyProfilePage> {
                       PopupMenuButton(
                         onSelected: (value) async {
                           switch (value) {
-                            case 'edit':
+                            case 'settings':
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      const EditProfilePage()));
+                                  builder: (context) => const SettingsPage()));
+                              break;
+                            case 'edit':
+                              await Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const EditProfilePage()));
+                              reload();
                               break;
                             case 'logout':
                               try {
@@ -115,7 +123,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                             height: 50,
                             width: 50,
                             child: profilePic == null
-                                ? const Center(child: Text("S"))
+                                ? Center(child: Text(user['username'][0]))
                                 : ClipOval(child: profilePic),
                           ),
                           Padding(
@@ -220,57 +228,64 @@ class _MyProfilePageState extends State<MyProfilePage> {
                       ),
                     ),
                     Expanded(
-                      child: TabBarView(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(right: 8, left: 8),
-                            child: myEvents.isEmpty
-                                ? const Center(child: Text('No events yet'))
-                                : EventsListView(myEvents, isPage: false),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 8, left: 8),
-                            child: events.isEmpty
-                                ? const Center(child: Text('No events yet'))
-                                : EventsListView(events, isPage: false),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 8, left: 8),
-                            child: Column(
-                              children: [
-                                GestureDetector(
-                                  onTap: () async {
-                                    await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const SearchProfilePage(),
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 700),
+                        child: TabBarView(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8, left: 8),
+                              child: myEvents.isEmpty
+                                  ? const Center(child: Text('No events yet'))
+                                  : ConstrainedBox(
+                                      constraints:
+                                          const BoxConstraints(maxWidth: 500),
+                                      child: EventsListView(myEvents,
+                                          isPage: false)),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8, left: 8),
+                              child: events.isEmpty
+                                  ? const Center(child: Text('No events yet'))
+                                  : EventsListView(events, isPage: false),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8, left: 8),
+                              child: Column(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () async {
+                                      await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const SearchProfilePage(),
+                                        ),
+                                      );
+                                      getContacts();
+                                    },
+                                    child: const Padding(
+                                      padding: EdgeInsets.only(top: 10),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.search),
+                                          Text("Search people"),
+                                        ],
                                       ),
-                                    );
-                                    getContacts();
-                                  },
-                                  child: const Padding(
-                                    padding: EdgeInsets.only(top: 10),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(Icons.search),
-                                        Text("Search people"),
-                                      ],
                                     ),
                                   ),
-                                ),
-                                contacts.isEmpty
-                                    ? const SizedBox.shrink()
-                                    : Expanded(
-                                        child: ContactsListView(
-                                        contacts,
-                                      )),
-                              ],
-                            ),
-                          )
-                        ],
+                                  contacts.isEmpty
+                                      ? const SizedBox.shrink()
+                                      : Expanded(
+                                          child: ContactsListView(
+                                          contacts,
+                                        )),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -285,13 +300,13 @@ class _MyProfilePageState extends State<MyProfilePage> {
       user = await fetchMyUser();
       _getData();
     } catch (e) {
-      print("error fetching data $e");
+      //
     }
     if (user.isEmpty) {
       return;
     }
     setState(() {
-      if (user["profile-pic"] != null) {
+      if (user["profile-pic"] != "") {
         profilePic = Image.network(
           user["profile-pic"],
           fit: BoxFit.cover,
@@ -333,6 +348,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
   }
 
   getContacts() async {
+    contacts.clear();
     print("getting contacts: $getMycontacts()");
     for (var contact in getMycontacts()) {
       try {
@@ -343,5 +359,19 @@ class _MyProfilePageState extends State<MyProfilePage> {
       }
     }
     setState(() {});
+  }
+
+  reload() {
+    profilePic == null;
+    isLoaded = false;
+
+    myEvents = [];
+    events = [];
+    contacts = [];
+
+    user = {};
+    setState(() {
+      _getUser();
+    });
   }
 }

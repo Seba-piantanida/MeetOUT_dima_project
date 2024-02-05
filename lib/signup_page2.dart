@@ -38,6 +38,11 @@ class _SignUpPage2State extends State<SignUpPage2> {
       ),
       body: Stack(
         children: [
+          Container(
+            color: Colors.black26,
+            height: double.infinity,
+            width: double.infinity,
+          ),
           Positioned(
             left: -100,
             top: 10,
@@ -76,66 +81,71 @@ class _SignUpPage2State extends State<SignUpPage2> {
               ),
             ),
           ),
-          SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                    20, MediaQuery.of(context).size.height * 0.2, 20, 0),
-                child: Column(children: [
-                  GestureDetector(
-                    onTap: () async {
-                      _profilePic = await ImagePicker()
-                          .pickImage(source: ImageSource.gallery);
-                      setState(() {});
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.3),
-                          shape: BoxShape.circle),
-                      height: 150,
-                      width: 150,
-                      child: _profilePic == null
-                          ? const Icon(Icons.add_a_photo_outlined)
-                          : ClipOval(
-                              child: Image.file(
-                                File(_profilePic!.path),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                    ),
+          Center(
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 600),
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(
+                        20, MediaQuery.of(context).size.height * 0.2, 20, 0),
+                    child: Column(children: [
+                      GestureDetector(
+                        onTap: () async {
+                          _profilePic = await ImagePicker()
+                              .pickImage(source: ImageSource.gallery);
+                          setState(() {});
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.3),
+                              shape: BoxShape.circle),
+                          height: 150,
+                          width: 150,
+                          child: _profilePic == null
+                              ? const Icon(Icons.add_a_photo_outlined)
+                              : ClipOval(
+                                  child: Image.file(
+                                    File(_profilePic!.path),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      reusableTextField("Username", Icons.person_outlined,
+                          false, _userNameController),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      TextField(
+                        controller: _bioController,
+                        cursorColor: Colors.white,
+                        style: TextStyle(color: Colors.white.withOpacity(0.9)),
+                        minLines: 4,
+                        maxLines: 5,
+                        decoration: InputDecoration(
+                          labelText: "Tell us something more about you!",
+                          labelStyle:
+                              TextStyle(color: Colors.white.withOpacity(0.9)),
+                          floatingLabelAlignment: FloatingLabelAlignment.center,
+                          filled: true,
+                          floatingLabelBehavior: FloatingLabelBehavior.never,
+                          fillColor: Colors.white.withOpacity(0.3),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                              borderSide: const BorderSide(
+                                  width: 0, style: BorderStyle.none)),
+                        ),
+                      ),
+                      firebaseUIButton(context, "Finish", _completeSignUp),
+                    ]),
                   ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  reusableTextField("Username", Icons.person_outlined, false,
-                      _userNameController),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  TextField(
-                    controller: _bioController,
-                    cursorColor: Colors.white,
-                    style: TextStyle(color: Colors.white.withOpacity(0.9)),
-                    minLines: 4,
-                    maxLines: 5,
-                    decoration: InputDecoration(
-                      labelText: "Tell us something more about you!",
-                      labelStyle:
-                          TextStyle(color: Colors.white.withOpacity(0.9)),
-                      floatingLabelAlignment: FloatingLabelAlignment.center,
-                      filled: true,
-                      floatingLabelBehavior: FloatingLabelBehavior.never,
-                      fillColor: Colors.white.withOpacity(0.3),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                          borderSide: const BorderSide(
-                              width: 0, style: BorderStyle.none)),
-                    ),
-                  ),
-                  firebaseUIButton(context, "Finish", _completeSignUp),
-                ]),
+                ),
               ),
             ),
           ),

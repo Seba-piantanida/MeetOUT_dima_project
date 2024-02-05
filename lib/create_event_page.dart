@@ -45,264 +45,282 @@ class _CreateEventPageState extends State<CreateEventPage> {
             style: Theme.of(context).textTheme.headlineMedium,
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.only(left: 15, right: 15),
-          child: ListView(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 15),
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 15),
-                      child: GestureDetector(
-                        onTap: () {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return ImageSelectionDialog(
-                                    onImageSelected: (String imageName) {
-                                  selectedIcon = imageName;
-                                  setState(() {});
-
-                                  // Handle the selected image
-                                });
-                              });
-                        },
-                        child: Container(
-                          height: 50,
-                          width: 50,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey.shade600),
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: selectedIcon == ""
-                              ? const Icon(Icons.add_box_rounded)
-                              : ClipOval(child: Image.asset(selectedIcon)),
-                        ),
-                      ),
-                    ),
-                    Flexible(
-                      child: TextField(
-                        controller: nameInput,
-                        decoration: const InputDecoration(
-                          hintText: 'Event name',
-                          border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20))),
-                          contentPadding: EdgeInsets.all(8.0),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Text(
-                  "Description",
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-              ),
-              TextField(
-                controller: descriptionInput,
-                minLines: 4,
-                maxLines: 5,
-                decoration: const InputDecoration(
-                  hintText: 'Write a description of your event',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(20))),
-                  contentPadding: EdgeInsets.all(8.0),
-                ),
-              ),
-              Row(
+        body: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 600, maxHeight: 6000),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 15, right: 15),
+              child: ListView(
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 15),
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 15),
+                          child: GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return ImageSelectionDialog(
+                                        onImageSelected: (String imageName) {
+                                      selectedIcon = imageName;
+                                      setState(() {});
+
+                                      // Handle the selected image
+                                    });
+                                  });
+                            },
+                            child: Container(
+                              height: 50,
+                              width: 50,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey.shade600),
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: selectedIcon == ""
+                                  ? const Icon(Icons.add_box_rounded)
+                                  : ClipOval(child: Image.asset(selectedIcon)),
+                            ),
+                          ),
+                        ),
+                        Flexible(
+                          child: TextField(
+                            controller: nameInput,
+                            decoration: const InputDecoration(
+                              hintText: 'Event name',
+                              border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20))),
+                              contentPadding: EdgeInsets.all(8.0),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   Padding(
                     padding: const EdgeInsets.all(15.0),
                     child: Text(
-                      "Date-time",
+                      "Description",
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ),
-                  Expanded(
-                    child: Text(
-                      "All day",
-                      textAlign: TextAlign.right,
-                      style: Theme.of(context).textTheme.labelSmall,
+                  TextField(
+                    controller: descriptionInput,
+                    minLines: 4,
+                    maxLines: 5,
+                    decoration: const InputDecoration(
+                      hintText: 'Write a description of your event',
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(20))),
+                      contentPadding: EdgeInsets.all(8.0),
                     ),
                   ),
-                  Switch(
-                      value: allDay,
-                      onChanged: (bool value) {
-                        setState(() {
-                          allDay = value;
-                        });
-                      })
-                ],
-              ),
-              Row(
-                mainAxisAlignment: allDay
-                    ? MainAxisAlignment.start
-                    : MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    width: 150,
-                    child: TextField(
-                        controller: dateInput,
-                        textAlign: TextAlign.center,
-                        readOnly: true,
-                        decoration: const InputDecoration(
-                          hintText: 'Pick a date',
-                          border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20))),
-                          contentPadding: EdgeInsets.all(8.0),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Text(
+                          "Date-time",
+                          style: Theme.of(context).textTheme.titleLarge,
                         ),
-                        onTap: () async {
-                          DateTime? pickedDate = await showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime.now(),
-                              lastDate: DateTime(2100));
-                          if (pickedDate != null) {
+                      ),
+                      Expanded(
+                        child: Text(
+                          "All day",
+                          textAlign: TextAlign.right,
+                          style: Theme.of(context).textTheme.labelSmall,
+                        ),
+                      ),
+                      Switch(
+                          value: allDay,
+                          onChanged: (bool value) {
                             setState(() {
-                              selectedDate = pickedDate;
-                              dateInput.text =
-                                  DateFormat('dd-MM-yyyy').format(pickedDate);
+                              allDay = value;
                             });
-                          }
-
-                          print(pickedDate);
-                        }),
+                          })
+                    ],
                   ),
-                  !allDay
-                      ? SizedBox(
-                          //padding: const EdgeInsets.only(top: 15),
-                          width: 150,
-                          child: Center(
-                            child: TextField(
-                                controller: timeInput,
-                                textAlign: TextAlign.center,
-                                readOnly: true,
-                                decoration: const InputDecoration(
-                                  hintText: 'Pick time',
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(20))),
-                                  contentPadding: EdgeInsets.all(8.0),
-                                ),
-                                onTap: () async {
-                                  TimeOfDay? pickedTime = await showTimePicker(
-                                    initialTime: TimeOfDay.now(),
-                                    context: context,
-                                  );
-                                  if (pickedTime != null) {
-                                    selectedTime = pickedTime;
-                                    String formattedTime =
-                                        DateFormat('hh:mm').format(
-                                      DateTime(2020, 1, 1, pickedTime.hour,
-                                          pickedTime.minute),
-                                    );
-                                    setState(() {
-                                      timeInput.text = formattedTime;
-                                    });
-                                  }
-
-                                  print(pickedTime);
-                                }),
-                          ),
-                        )
-                      : const SizedBox.shrink(),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Text(
-                  "Location",
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  ElevatedButton(
-                      onPressed: () async {
-                        dynamic returnedLocation = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const LocationPicker()));
-                        if (returnedLocation != null) {
-                          _locationInput = returnedLocation;
-                          setState(() {});
-                        }
-                      },
-                      child: const Row(
-                        children: [Icon(Icons.pin_drop), Text("Pick location")],
-                      )),
-                  _locationInput != null
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: SizedBox.square(
-                            dimension: 150,
-                            child: MapView(
-                              center: _locationInput!,
+                  Row(
+                    mainAxisAlignment: allDay
+                        ? MainAxisAlignment.start
+                        : MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                        width: 150,
+                        child: TextField(
+                            controller: dateInput,
+                            textAlign: TextAlign.center,
+                            readOnly: true,
+                            decoration: const InputDecoration(
+                              hintText: 'Pick a date',
+                              border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20))),
+                              contentPadding: EdgeInsets.all(8.0),
                             ),
+                            onTap: () async {
+                              DateTime? pickedDate = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime.now(),
+                                  lastDate: DateTime(2100));
+                              if (pickedDate != null) {
+                                setState(() {
+                                  selectedDate = pickedDate;
+                                  dateInput.text = DateFormat('dd-MM-yyyy')
+                                      .format(pickedDate);
+                                });
+                              }
+
+                              print(pickedDate);
+                            }),
+                      ),
+                      !allDay
+                          ? SizedBox(
+                              //padding: const EdgeInsets.only(top: 15),
+                              width: 150,
+                              child: Center(
+                                child: TextField(
+                                    controller: timeInput,
+                                    textAlign: TextAlign.center,
+                                    readOnly: true,
+                                    decoration: const InputDecoration(
+                                      hintText: 'Pick time',
+                                      border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20))),
+                                      contentPadding: EdgeInsets.all(8.0),
+                                    ),
+                                    onTap: () async {
+                                      TimeOfDay? pickedTime =
+                                          await showTimePicker(
+                                        initialTime: TimeOfDay.now(),
+                                        context: context,
+                                      );
+                                      if (pickedTime != null) {
+                                        selectedTime = pickedTime;
+                                        String formattedTime =
+                                            DateFormat('hh:mm').format(
+                                          DateTime(2020, 1, 1, pickedTime.hour,
+                                              pickedTime.minute),
+                                        );
+                                        setState(() {
+                                          timeInput.text = formattedTime;
+                                        });
+                                      }
+
+                                      print(pickedTime);
+                                    }),
+                              ),
+                            )
+                          : const SizedBox.shrink(),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Text(
+                      "Location",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                          onPressed: () async {
+                            dynamic returnedLocation = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const LocationPicker()));
+                            if (returnedLocation != null) {
+                              _locationInput = returnedLocation;
+                              setState(() {});
+                            }
+                          },
+                          child: const Row(
+                            children: [
+                              Icon(Icons.pin_drop),
+                              Text("Pick location")
+                            ],
+                          )),
+                      _locationInput != null
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: SizedBox.square(
+                                dimension: 150,
+                                child: MapView(
+                                  center: _locationInput!,
+                                ),
+                              ),
+                            )
+                          : const SizedBox.shrink(),
+                    ],
+                  ),
+                  // Padding(
+                  //   padding: const EdgeInsets.all(15.0),
+                  //   child: Text(
+                  //     "Partecipants",
+                  //     style: Theme.of(context).textTheme.titleLarge,
+                  //   ),
+                  // ),
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Text(
+                      "Images",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ),
+                  SizedBox(
+                    height: _images.isEmpty ? 50 : 100,
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: _images.length + 1,
+                            itemBuilder: (context, index) {
+                              if (index == _images.length) {
+                                return IconButton(
+                                    onPressed: () async {
+                                      List<XFile?> pickedImages =
+                                          await ImagePicker().pickMultiImage();
+                                      _images.addAll(pickedImages);
+                                      setState(() {});
+                                    },
+                                    icon: const Icon(
+                                        Icons.add_photo_alternate_outlined));
+                              }
+                              return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Image.file(
+                                    File(_images[index]!.path),
+                                    width: 100,
+                                    height: 100,
+                                  ));
+                            },
                           ),
-                        )
-                      : const SizedBox.shrink(),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: ElevatedButton(
+                        onPressed: _createEvent,
+                        child: Text(
+                          "Create",
+                          style: Theme.of(context).textTheme.titleMedium,
+                        )),
+                  )
                 ],
               ),
-              // Padding(
-              //   padding: const EdgeInsets.all(15.0),
-              //   child: Text(
-              //     "Partecipants",
-              //     style: Theme.of(context).textTheme.titleLarge,
-              //   ),
-              // ),
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Text(
-                  "Images",
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-              ),
-              SizedBox(
-                height: _images.isEmpty ? 50 : 100,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _images.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == _images.length) {
-                      return IconButton(
-                          onPressed: () async {
-                            List<XFile?> pickedImages =
-                                await ImagePicker().pickMultiImage();
-                            _images.addAll(pickedImages);
-                            setState(() {});
-                          },
-                          icon: const Icon(Icons.add_photo_alternate_outlined));
-                    }
-                    return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Image.file(
-                          File(_images[index]!.path),
-                          width: 100,
-                          height: 100,
-                        ));
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: ElevatedButton(
-                    onPressed: _createEvent,
-                    child: Text(
-                      "Create",
-                      style: Theme.of(context).textTheme.titleMedium,
-                    )),
-              )
-            ],
+            ),
           ),
         ));
   }
