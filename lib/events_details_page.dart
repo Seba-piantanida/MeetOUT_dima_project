@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:dima_project/events_manager.dart';
+import 'package:dima_project/im/chat.dart';
 import 'package:dima_project/reusable_widget/map_viewer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -170,8 +171,9 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
               const SizedBox(
                 height: 10,
               ),
-              SizedBox(
-                height: 150,
+              ConstrainedBox(
+                constraints: const BoxConstraints(
+                    minHeight: 150, maxHeight: 150, maxWidth: 600),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: MapView(
@@ -200,13 +202,21 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
             ? FloatingActionButton.extended(
                 label: const Text("Quit"),
                 onPressed: () async {
-                  await quitEvent(widget.event['id']);
+                  await quitEvent(widget.event['id'], widget.event);
                   _isInMyEvents();
                 })
             : FloatingActionButton.extended(
                 label: const Text("Join"),
                 onPressed: () async {
-                  await joinEvent(widget.event['id']);
+                  await joinEvent(widget.event['id'], widget.event, (value) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Chat(
+                            selectedConversation: value,
+                          ),
+                        ));
+                  });
 
                   _isInMyEvents();
                 }),

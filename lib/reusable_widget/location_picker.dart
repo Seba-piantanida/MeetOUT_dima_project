@@ -42,7 +42,7 @@ class _LocationPickerState extends State<LocationPicker> {
                       },
                       icon: const Icon(Icons.arrow_back_ios_new)),
                   ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 400),
+                    constraints: const BoxConstraints(maxWidth: 300),
                     child: Expanded(
                       child: Container(
                         decoration: BoxDecoration(

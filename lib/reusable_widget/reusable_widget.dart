@@ -56,3 +56,19 @@ Container firebaseUIButton(BuildContext context, String title, Function onTap) {
     ),
   );
 }
+
+AlertDialog errorMessage(String message, BuildContext context) {
+  return AlertDialog(
+    title: const Text('Error'),
+    content: Text(message),
+    actions: [
+      TextButton(
+        onPressed: () {
+          // Close the dialog
+          Navigator.of(context).pop();
+        },
+        child: const Text('OK'),
+      ),
+    ],
+  );
+}

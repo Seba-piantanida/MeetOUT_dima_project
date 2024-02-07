@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
+
 import 'package:dima_project/create_event_page.dart';
 
 void main() {
@@ -18,6 +18,16 @@ void main() {
 
       // Verify that the initial state is as expected
       expect(find.text('New event'), findsOneWidget);
+
+      expect(find.text('Location'), findsOneWidget);
+
+      expect(find.text('Description'), findsOneWidget);
+
+      expect(find.text('Pick time'), findsOneWidget);
+
+      expect(find.text('Pick a date'), findsOneWidget);
+
+      expect(find.byType(ElevatedButton), findsAny);
 
       // Wait for the widget to rebuild after interactions
       await tester.pump();

@@ -267,7 +267,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             Padding(
                               padding: const EdgeInsets.only(left: 8, right: 8),
                               child: contacts.isEmpty
-                                  ? const Center(child: Text("No contacts"))
+                                  ? const Center(child: Text("No friends"))
                                   : ContactsListView(contacts),
                             ),
                           ],

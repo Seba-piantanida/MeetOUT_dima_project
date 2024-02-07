@@ -2,10 +2,13 @@ import 'package:dima_project/check_auth.dart';
 import 'package:dima_project/create_event_page.dart';
 import 'package:dima_project/find_page.dart';
 import 'package:dima_project/firebase_options.dart';
+import 'package:dima_project/im/conversation.dart';
 import 'package:dima_project/my_profile_page.dart';
 import 'package:dima_project/tablet_find_page.dart';
+import 'package:dima_project/tablet_my_profile_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:tencent_cloud_chat_uikit/ui/controller/tim_uikit_conversation_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,7 +54,8 @@ class NavBar extends StatefulWidget {
 
 class _NavBarState extends State<NavBar> {
   int pageIndex = 1;
-
+  final TIMUIKitConversationController _conversationController =
+      TIMUIKitConversationController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,12 +74,14 @@ class _NavBarState extends State<NavBar> {
         },
       ),
       body: <Widget>[
-        const Placeholder(),
+        Conversation(conversationController: _conversationController),
         MediaQuery.of(context).size.width <= 600
             ? const FindPage()
             : const TabletFindPage(),
         const CreateEventPage(),
-        const MyProfilePage()
+        MediaQuery.of(context).size.width <= 600
+            ? const MyProfilePage()
+            : const TabletMyProfilePage()
       ][pageIndex],
     );
   }

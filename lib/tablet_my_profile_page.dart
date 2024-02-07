@@ -11,14 +11,14 @@ import 'package:dima_project/user_manager.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class MyProfilePage extends StatefulWidget {
-  const MyProfilePage({super.key});
+class TabletMyProfilePage extends StatefulWidget {
+  const TabletMyProfilePage({super.key});
 
   @override
-  State<MyProfilePage> createState() => _MyProfilePageState();
+  State<TabletMyProfilePage> createState() => _TabletMyProfilePageState();
 }
 
-class _MyProfilePageState extends State<MyProfilePage> {
+class _TabletMyProfilePageState extends State<TabletMyProfilePage> {
   Image? profilePic;
   bool isLoaded = false;
 
@@ -206,89 +206,94 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   ),
                 ];
               },
-              body: DefaultTabController(
-                length: 3,
-                child: Column(
-                  children: [
-                    Container(
-                      constraints: const BoxConstraints.expand(height: 70),
-                      child: const TabBar(
-                        tabs: [
-                          Tab(
-                              icon: Icon(Icons.list_rounded),
-                              text: "my events"),
-                          Tab(
-                              icon: Icon(Icons.list_alt_rounded),
-                              text: "events"),
-                          Tab(
-                              icon: Icon(Icons.person_outline),
-                              text: "friends"),
-                        ],
-                      ),
+              body: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      children: [
+                        const Icon(Icons.list_rounded),
+                        const Text('my events'),
+                        const Divider(),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 8, left: 8),
+                            child: myEvents.isEmpty
+                                ? const Center(child: Text('No events yet'))
+                                : ConstrainedBox(
+                                    constraints:
+                                        const BoxConstraints(maxWidth: 500),
+                                    child: EventsListView(myEvents,
+                                        isPage: false)),
+                          ),
+                        ),
+                      ],
                     ),
-                    Expanded(
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 700),
-                        child: TabBarView(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(right: 8, left: 8),
-                              child: myEvents.isEmpty
-                                  ? const Center(child: Text('No events yet'))
-                                  : ConstrainedBox(
-                                      constraints:
-                                          const BoxConstraints(maxWidth: 500),
-                                      child: EventsListView(myEvents,
-                                          isPage: false)),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 8, left: 8),
-                              child: events.isEmpty
-                                  ? const Center(child: Text('No events yet'))
-                                  : EventsListView(events, isPage: false),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 8, left: 8),
-                              child: Column(
-                                children: [
-                                  GestureDetector(
-                                    onTap: () async {
-                                      await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const SearchProfilePage(),
-                                        ),
-                                      );
-                                      getContacts();
-                                    },
-                                    child: const Padding(
-                                      padding: EdgeInsets.only(top: 10),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Icon(Icons.search),
-                                          Text("Search people"),
-                                        ],
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        const Icon(Icons.list_alt_rounded),
+                        const Text('events'),
+                        const Divider(),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 8, left: 8),
+                            child: events.isEmpty
+                                ? const Center(child: Text('No events yet'))
+                                : EventsListView(events, isPage: false),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        const Icon(Icons.person_outline),
+                        const Text('friends'),
+                        const Divider(),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 8, left: 8),
+                            child: Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () async {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const SearchProfilePage(),
                                       ),
+                                    );
+                                    getContacts();
+                                  },
+                                  child: const Padding(
+                                    padding: EdgeInsets.only(top: 10),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.search),
+                                        Text("Search people"),
+                                      ],
                                     ),
                                   ),
-                                  contacts.isEmpty
-                                      ? const SizedBox.shrink()
-                                      : Expanded(
-                                          child: ContactsListView(
-                                          contacts,
-                                        )),
-                                ],
-                              ),
-                            )
-                          ],
+                                ),
+                                contacts.isEmpty
+                                    ? const SizedBox.shrink()
+                                    : Expanded(
+                                        child: ContactsListView(
+                                        contacts,
+                                      )),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           );

@@ -25,15 +25,17 @@ class _SignUpPage2State extends State<SignUpPage2> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          icon: const Icon(
+            Icons.arrow_back_ios,
+          ),
           onPressed: _undoRegistration,
         ),
         backgroundColor: Colors.transparent,
         title: const Text(
           "Sign Up",
-          style: TextStyle(
-              color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
       ),
       body: Stack(

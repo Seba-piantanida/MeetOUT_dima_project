@@ -103,16 +103,24 @@ class _SignUpPageState extends State<SignUpPage> {
                           height: 20,
                         ),
                         firebaseUIButton(context, "Register", () {
-                          FirebaseAuth.instance
-                              .createUserWithEmailAndPassword(
-                                  email: _emailTextController.text,
-                                  password: _passwordTextController.text)
-                              .then((value) => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const SignUpPage2()),
-                                  ));
+                          try {
+                            FirebaseAuth.instance
+                                .createUserWithEmailAndPassword(
+                                    email: _emailTextController.text,
+                                    password: _passwordTextController.text)
+                                .then((value) => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const SignUpPage2()),
+                                    ));
+                          } catch (e) {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return errorMessage(e.toString(), context);
+                                });
+                          }
                         })
                       ],
                     ),

@@ -7,10 +7,19 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'package:tencent_cloud_chat_uikit/tencent_cloud_chat_uikit.dart';
+
 final geo = GeoFlutterFire();
 final _firestore = FirebaseFirestore.instance;
 
 Future<void> saveEvent(Map<String, dynamic> event) async {
+  var groupData = await TencentImSDKPlugin.v2TIMManager
+      .getGroupManager()
+      .createGroup(
+          groupType: "Public",
+          groupName: event["name"],
+          addOpt: GroupAddOptTypeEnum.V2TIM_GROUP_ADD_ANY);
+  event["group-id"] = groupData.data;
   List<String> imageUrls = [];
 
   for (XFile image in event["images"]) {
@@ -156,7 +165,8 @@ Future<void> addToMyEvents(String eventId) async {
   }
 }
 
-joinEvent(String eventId) async {
+joinEvent(String eventId, dynamic event,
+    void Function(V2TimConversation)? callback) async {
   String? myId = FirebaseAuth.instance.currentUser?.uid;
 
   if (myId == null) {
@@ -182,9 +192,24 @@ joinEvent(String eventId) async {
   } else {
     throw Exception('User not found');
   }
+
+  var groupId = event?['group-id'] ?? "";
+  print(groupId);
+  if (groupId != "") {
+    var result = await TencentImSDKPlugin.v2TIMManager
+        .joinGroup(groupID: groupId, message: "");
+    print(result);
+    V2TimValueCallback<V2TimConversation> conv = await TencentImSDKPlugin
+        .v2TIMManager.v2ConversationManager
+        .getConversation(conversationID: "group_${groupId}");
+    print(conv.data?.toJson());
+    if (conv.data != null && callback != null) {
+      callback(conv.data!);
+    }
+  }
 }
 
-quitEvent(String eventId) async {
+quitEvent(String eventId, dynamic event) async {
   String? myId = FirebaseAuth.instance.currentUser?.uid;
 
   if (myId == null) {
@@ -207,5 +232,13 @@ quitEvent(String eventId) async {
     await targetUserRef.update({'events': events});
   } else {
     throw Exception('User not found');
+  }
+
+  var groupId = event?['group-id'] ?? "";
+  print(groupId);
+  if (groupId != "") {
+    var result =
+        await TencentImSDKPlugin.v2TIMManager.quitGroup(groupID: groupId);
+    print(result.code);
   }
 }

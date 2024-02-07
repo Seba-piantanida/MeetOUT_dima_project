@@ -7,5 +7,7 @@ void main() {
     await tester.pumpWidget(MaterialApp(
       home: FindPage(),
     ));
+
+    expect(find.textContaining('Search'), findsOneWidget);
   });
 }
