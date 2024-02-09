@@ -3,14 +3,14 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  audioplayers_windows
   cloud_firestore
   desktop_drop
-  fc_native_video_thumbnail_for_us
+  fc_native_video_thumbnail
   file_selector_windows
   firebase_auth
   firebase_core
   firebase_storage
+  image_clipboard
   pasteboard
   permission_handler_windows
   url_launcher_windows

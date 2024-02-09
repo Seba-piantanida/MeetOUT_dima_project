@@ -8,7 +8,7 @@ import 'package:tencent_cloud_chat_uikit/tencent_cloud_chat_uikit.dart';
 class im {
   final CoreServicesImpl _coreInstance = TIMUIKitCore.getInstance();
 
-  void initIMSDK() {
+  Future<void> initIMSDK() async {
     _coreInstance.init(sdkAppID: 1721000593, language: LanguageEnum.en, loglevel: LogLevelEnum.V2TIM_LOG_DEBUG, onTUIKitCallbackListener: (TIMCallback callbackValue){
       print(callbackValue);
       switch(callbackValue.type) {
@@ -38,6 +38,8 @@ class im {
     }, listener: V2TimSDKListener());
     var userID = FirebaseAuth.instance.currentUser?.uid ?? "";
     var userSig = GenerateTestUserSig(key: "7feb3cb883685ac7d572c91e3f1c1532ca477608046bc42963db3c9051c69aa6", sdkappid: 1721000593).genSig(identifier: userID, expire: 3600 * 24 * 1000);
-    TIMUIKitCore.getInstance().login(userID: userID, userSig: userSig);
+    var result = await TIMUIKitCore.getInstance().login(userID: userID, userSig: userSig);
+    print(result);
+
   }
 }

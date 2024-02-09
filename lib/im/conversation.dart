@@ -134,37 +134,6 @@ class _ConversationState extends State<Conversation> {
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          actions: <Widget>[
-            Builder(builder: (BuildContext c) {
-              return IconButton(
-                  onPressed: () {
-                    JhPopMenus.show(context, clickCallback: (index, selText) {
-                      if (selText == 'Add Friend') {
-                        print(111);
-                        Future.delayed(Duration(milliseconds: 400), () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => const AddFriend(),
-                            ),
-                          );
-                        });
-                      } else if (selText == 'Add Group') {
-                        Future.delayed(Duration(milliseconds: 400), () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => const AddGroup(),
-                            ),
-                          );
-                        });
-                      }
-                    });
-                  },
-                  icon: const Icon(
-                    Icons.add_circle_outline,
-                    color: Colors.black,
-                  ));
-            }),
-          ],
           title: Text(
             "Chat",
             style: Theme.of(context).textTheme.headlineMedium,
